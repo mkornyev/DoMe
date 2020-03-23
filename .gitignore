@@ -1,0 +1,7 @@
+# doMe GitIgnore
+*.pyc
+db.sqlite3
+migrations
+.DS_Store
+.vscode/
+# doMe/user_uploads/*
