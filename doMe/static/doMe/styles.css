@@ -1,8 +1,10 @@
 * {
     margin: 0;
     padding: 0; 
+    /* background-color: #EE9480; */
 }
 
 html {
-    background-color: #EE9480;
+    /* background-color: #EE9480; */
+    width: 100%;
 }

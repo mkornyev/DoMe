@@ -21,7 +21,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Basic Routes
-    path('', views.home, name='Home'),
+    path('', views.landingPage, name='Landing Page'),
+    path('home/', views.home, name='Home'),
     path('login/', views.login, name = 'Login'),
     path('logout/', views.logout, name='Logout'),
     path('about/', views.about, name='About'),

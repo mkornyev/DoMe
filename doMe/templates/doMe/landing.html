@@ -1,0 +1,35 @@
+{% extends "doMe/base.html" %}
+
+{% block page_specific_styles %}{% endblock %}
+
+{% block title %}{% block navtitle %}
+	Welcome
+{% endblock %}{% endblock %}
+
+{% block content %}
+	<div class="row" style="padding-top: 20vh;">
+        <div class="col">
+            <h1 style="font-size: 2em; font-weight: 100;"><span style="color: indianred;">Do</span>Me</h1>
+            <p>
+                Welcome to DoMe, a collaborative get-things-done app!<br><br>
+                <span>We pride ourselves on collab calendars, todo items, and priorities<br>Made by Andrew Hong and Maksym Kornyev @ Carnegie Mellon University<br>Django 3.0 | Python 3.6</span>
+            </p>
+        </div>
+        
+        <div class="col">
+            <div class="card">
+                <h5 class="card-header">Log In</h5>
+                <div class="card-body">
+                    <p class="card-text">Quick, get to collaborating!</p>
+                    <p class="card-text">
+                        <form method="POST" action="{% url 'Login' %}" class="login">
+                            <table>{{ loginForm }}</table>
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </form>
+                    </p>
+                </div>
+            </div>
+        </div>
+	</div>
+{% endblock %}
