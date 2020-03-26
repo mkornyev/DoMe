@@ -1,0 +1,71 @@
+{% extends "doMe/base.html" %}
+
+{% block page_specific_styles %}{% endblock %}
+
+{% block title %}{% block navtitle %}
+	My Workspaces
+{% endblock %}{% endblock %}
+
+{% block content %}
+    <div class="row">
+
+        <div class="col">
+            <br>
+            <h1 style="display: inline;"> My workspaces</h1>&nbsp;
+            <button id='add-workspace' style="all: unset; cursor: pointer; display: inline; padding-bottom: 5px;" data-toggle="modal" data-target="#exampleModal">
+                <svg class="bi bi-plus-square" width="2em" height="2em" viewBox="0 0 20 20" fill="red" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 5px;">
+                    <path fill-rule="evenodd" d="M8 3.5a.5.5 0 01.5.5v4a.5.5 0 01-.5.5H4a.5.5 0 010-1h3.5V4a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                    <path fill-rule="evenodd" d="M7.5 8a.5.5 0 01.5-.5h4a.5.5 0 010 1H8.5V12a.5.5 0 01-1 0V8z" clip-rule="evenodd"/>
+                    <path fill-rule="evenodd" d="M14 1H2a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V2a1 1 0 00-1-1zM2 0a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V2a2 2 0 00-2-2H2z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+            <br></br>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">New Workspace</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <form>
+                        <table>{{ workspaceForm }}</table>
+                        {% csrf_token %}
+                        <button type="button" class="btn btn-primary">Create Workspace</button>
+                        </form>
+                    </div>
+
+                    <!-- <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                    </div> -->
+                </div>
+                </div>
+            </div>
+
+            {% for workspace in workspaces %}
+            <div class="card" style="width: 20rem; border-radius: 30px;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ workspace.title }}</h5>
+                    <p class="card-text mb-2 text-muted">{{ workspace.description }}</p>
+                    
+                    <ul class="pl-4">
+                    {% if workspace.listItems.count > 0 %}
+                        {% for item in workspace.listItems %}
+                        <li>{{ item.title }}</li>
+                        {% endfor %}
+                    {% else %}
+                        <li>Add your first todo!</li>
+                    {% endif %}
+                    </ul>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+	</div>
+{% endblock %}

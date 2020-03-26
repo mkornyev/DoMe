@@ -22,5 +22,6 @@ class toDoItem(models.Model):
 
 class Workspace(models.Model):
 	members = models.ManyToManyField(Profile, related_name = "workspaces")
+	title = models.CharField(max_length=30, default='My Workspace')
 	description = models.CharField(max_length=200)
 	listItems = models.ManyToManyField(toDoItem)

@@ -45,7 +45,7 @@ def register(request):
 	profile = Profile(user=user)
 	profile.save()
 
-	workspace = Workspace(description='Your personal workspace. See your global ToDos here.')
+	workspace = Workspace(title='My Workspace', description='Your personal workspace. See your global ToDos here.')
 	workspace.save()
 	workspace.members.add(profile)
 
@@ -80,7 +80,7 @@ def login(request):
 
 @login_required
 def home(request): 
-	context = { 'workspaces': request.user.profile_set.first().workspaces.all() }
+	context = { 'workspaces': [w for w in request.user.profile_set.first().workspaces.all()], 'workspaceForm': LoginForm() }
 	return render(request, 'doMe/home.html', context)
 
 @login_required
