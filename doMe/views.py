@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
+from django.contrib.auth.models import User
 
 from doMe.forms import LoginForm, RegistrationForm
 from doMe.models import Workspace, Profile, toDoItem
@@ -21,6 +22,7 @@ def landingPage(request):
 
 	context = {} 
 	context['loginForm'] = LoginForm()
+	context['loginTab'] = 'defaultOpen'
 	context['registrationForm'] = RegistrationForm()
 	return render(request, 'doMe/landing.html', context)
 
@@ -31,7 +33,10 @@ def register(request):
 	context = {}
 	context['registrationForm'] = RegistrationForm(request.POST)
 
+	form = RegistrationForm(request.POST)
+
 	if not form.is_valid():
+		context['registerTab'] = 'defaultOpen'
 		context['loginForm'] = LoginForm()
 		return render(request, 'doMe/landing.html', context)
 
@@ -45,9 +50,9 @@ def register(request):
 	profile = Profile(user=user)
 	profile.save() 
 
-	workspace = Workspace(title='My Workspace', description='Your personal workspace. See your global ToDos here.')
-	workspace.save()
-	workspace.members.add(profile)
+	# workspace = Workspace(title='My Workspace', description='Your personal workspace. See your global ToDos here.')
+	# workspace.save()
+	# workspace.members.add(profile)
 
 	user = authenticate(username=form.cleaned_data['username'],
 							password=form.cleaned_data['password'])
@@ -69,7 +74,8 @@ def login(request):
 	context['loginForm'] = form
 
 	if not form.is_valid():
-		context['reqistrationForm'] = RegistrationForm()
+		context['registrationForm'] = RegistrationForm()
+		context['loginTab'] = 'defaultOpen'
 		return render(request, 'doMe/landing.html', context)
 
 	user = authenticate(username=form.cleaned_data['username'],
@@ -80,7 +86,8 @@ def login(request):
 
 @login_required
 def home(request): 
-	context = { 'workspaces': [w for w in request.user.profile_set.first().workspaces.all()], 'workspaceForm': LoginForm() }
+	# context = { 'workspaces': [w for w in request.user.profile_set.first().workspaces.all()], 'workspaceForm': LoginForm() }
+	context = {}
 	return render(request, 'doMe/home.html', context)
 
 @login_required 
