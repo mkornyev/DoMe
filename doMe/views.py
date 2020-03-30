@@ -43,7 +43,7 @@ def register(request):
 	user.save()
 
 	profile = Profile(user=user)
-	profile.save()
+	profile.save() 
 
 	workspace = Workspace(title='My Workspace', description='Your personal workspace. See your global ToDos here.')
 	workspace.save()
@@ -83,7 +83,7 @@ def home(request):
 	context = { 'workspaces': [w for w in request.user.profile_set.first().workspaces.all()], 'workspaceForm': LoginForm() }
 	return render(request, 'doMe/home.html', context)
 
-@login_required
+@login_required 
 def logout(request):
 	auth_logout(request)
 	return redirect(reverse('Landing Page'))

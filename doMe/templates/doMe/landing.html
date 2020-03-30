@@ -15,21 +15,30 @@
                 <span>We pride ourselves on collab calendars, todo items, and priorities<br>Made by Andrew Hong and Maksym Kornyev @ Carnegie Mellon University<br>Django 3.0 | Python 3.6</span>
             </p>
         </div>
-        
+
         <div class="col">
-            <div class="card">
-                <h5 class="card-header">Log In</h5>
-                <div class="card-body">
+            <div class="tab">
+                <button class="tablinks" onclick="openTab(event, 'Login')" id='defaultOpen'>Login</button>
+  <button class="tablinks" onclick="openTab(event, 'Register')">Register</button>
+            </div>
+            <div id="Login" class="tabcontent">
                     <p class="card-text">Quick, get to collaborating!</p>
-                    <p class="card-text">
                         <form method="POST" action="{% url 'Login' %}" class="login">
                             <table>{{ loginForm }}</table>
                             {% csrf_token %}
                             <button type="submit" class="btn btn-primary">Login</button>
                         </form>
-                    </p>
+             </div>
+            <div id="Register" class="tabcontent">
+                <p class="cart-text">Register for an account</p>
+                        <form method="POST" action="{% url 'Register' %}" class="register">
+                            <table>{{ registrationForm }}</table>
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">Register</button>
+                        </form>
                 </div>
             </div>
         </div>
+
 	</div>
 {% endblock %}
