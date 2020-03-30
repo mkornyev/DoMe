@@ -10,6 +10,7 @@
     <div class="row">
 
         <div class="col">
+            <!-- Workspaces Header -->
             <br>
             <h1 style="display: inline;"> My workspaces</h1>&nbsp;
             <button id='add-workspace' style="all: unset; cursor: pointer; display: inline; padding-bottom: 5px;" data-toggle="modal" data-target="#exampleModal">
@@ -21,8 +22,8 @@
             </button>
             <br></br>
 
-            <!-- Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <!-- Add Workspace Modal -->
+            <div class="modal fade {% if workspaceForm.errors %}show{% endif %}" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" {% if workspaceForm.errors %}aria-modal='true' style="display: block;"{% else %}aria-hidden="true"{% endif%}>
                 <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -33,10 +34,10 @@
                     </div>
 
                     <div class="modal-body">
-                        <form>
+                        <form method="POST" action="{% url 'Home' %}">
                         <table>{{ workspaceForm }}</table>
                         {% csrf_token %}
-                        <button type="button" class="btn btn-primary">Create Workspace</button>
+                        <button type="submit" class="btn btn-primary">Create Workspace</button>
                         </form>
                     </div>
 
@@ -49,7 +50,8 @@
             </div>
 
             {% for workspace in workspaces %}
-            <div class="card" style="width: 20rem; border-radius: 30px;">
+            <a href="{% url 'Get Workspace' workspace.id %}">
+            <div class="card workspace" style="width: 20rem; border-radius: 30px;">
                 <div class="card-body">
                     <h5 class="card-title">{{ workspace.title }}</h5>
                     <p class="card-text mb-2 text-muted">{{ workspace.description }}</p>
@@ -65,7 +67,13 @@
                     </ul>
                 </div>
             </div>
+            </a>
             {% endfor %}
         </div>
 	</div>
+{% endblock %}
+
+{% block page_specific_scripts %}
+{% load static %}
+<script src="{% static 'doMe/workspaceScripts.js' %}" type="text/javascript"></script>
 {% endblock %}

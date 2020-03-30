@@ -1,0 +1,38 @@
+{% extends "doMe/base.html" %}
+
+{% block page_specific_styles %}{% endblock %}
+
+{% block title %}{% block navtitle %}
+	Workspace | {{ workspace.title }}
+{% endblock %}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col">
+            <!-- Header -->
+            <br>
+            <h1>{{ workspace.title }}</h1>
+            <p>{{ workspace.description }}</p>
+            <br></br>
+            
+            <!-- List -->
+            <h2>ToDo List</h2>
+            {% if listItems %}
+            <ul>
+                {% for todo in listItems %}
+                <li>
+                    {{ todo.title|add:': '|add:todo.description }}
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>Add your first todo here.</p>
+            {% endif %}
+        </div>
+	</div>
+{% endblock %}
+
+{% block page_specific_scripts %}
+{% load static %}
+<script src="{% static 'doMe/workspaceScripts.js' %}" type="text/javascript"></script>
+{% endblock %}

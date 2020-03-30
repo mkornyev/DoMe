@@ -81,7 +81,19 @@ def login(request):
 @login_required
 def home(request): 
 	context = { 'workspaces': [w for w in request.user.profile_set.first().workspaces.all()], 'workspaceForm': LoginForm() }
+
+	if request.method == 'POST': 
+		form = LoginForm(request.POST)
+		context['workspaceForm'] = form 
+		print(form.errors)
+
 	return render(request, 'doMe/home.html', context)
+
+@login_required
+def getWorkspace(request, id):
+	wkSpace = get_object_or_404(Workspace, id=id)
+	context = { 'workspace': wkSpace, 'listItems': wkSpace.listItems.all() }
+	return render(request, 'doMe/workspace.html', context)
 
 @login_required
 def logout(request):
