@@ -27,6 +27,14 @@ class LoginForm(forms.Form):
 
 		return cleaned_data
 
+class WorkspaceForm(forms.Form):
+	Organization = forms.CharField(max_length = 50, widget=forms.TextInput(attrs=INPUT_ATTRIBUTES))
+	Description = forms.CharField(max_length = 200, widget=forms.TextInput(attrs=INPUT_ATTRIBUTES))
+
+	def clean(self):
+		cleaned_data = super().clean()
+		Organization = cleaned_data.get('Organization')
+		return cleaned_data
 
 class RegistrationForm(forms.Form):
 	username   = forms.CharField(max_length = 50, widget=forms.TextInput(attrs=INPUT_ATTRIBUTES))

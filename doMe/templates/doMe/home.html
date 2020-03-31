@@ -33,7 +33,7 @@
                     </div>
 
                     <div class="modal-body">
-                        <form>
+                        <form method="POST" action="{% url 'CreateWorkspace' %}">
                         <table>{{ workspaceForm }}</table>
                         {% csrf_token %}
                         <button type="button" class="btn btn-primary">Create Workspace</button>
@@ -47,25 +47,15 @@
                 </div>
                 </div>
             </div>
-
             {% for workspace in workspaces %}
             <div class="card" style="width: 20rem; border-radius: 30px;">
                 <div class="card-body">
-                    <h5 class="card-title">{{ workspace.title }}</h5>
+                    <h5 class="card-title">{{ workspace.organization }}</h5>
                     <p class="card-text mb-2 text-muted">{{ workspace.description }}</p>
-                    
-                    <ul class="pl-4">
-                    {% if workspace.listItems.count > 0 %}
-                        {% for item in workspace.listItems %}
-                        <li>{{ item.title }}</li>
-                        {% endfor %}
-                    {% else %}
-                        <li>Add your first todo!</li>
-                    {% endif %}
-                    </ul>
                 </div>
             </div>
             {% endfor %}
+
         </div>
 	</div>
 {% endblock %}

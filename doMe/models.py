@@ -7,6 +7,9 @@ class Profile(models.Model):
 	user = models.ForeignKey(User, default=None, on_delete=models.PROTECT)
 	profilePicture = models.FileField(blank=True)
 
+	def __str__(self):
+		print('profile for', str(user))
+
 class toDoItem(models.Model):
 	class Priority(models.IntegerChoices):
 		High = 1
@@ -25,7 +28,6 @@ class Workspace(models.Model):
 	admin = models.ForeignKey(User, on_delete=models.PROTECT)
 	organization = models.CharField(max_length=30, default='My Workspace')
 	description = models.CharField(max_length=200)
-
 
 class doMeLists(models.Model):
 	members = models.ManyToManyField(Profile, related_name = "members")

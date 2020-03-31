@@ -10,7 +10,7 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.models import User
 
-from doMe.forms import LoginForm, RegistrationForm
+from doMe.forms import *
 from doMe.models import Workspace, Profile, toDoItem
 
 
@@ -87,8 +87,30 @@ def login(request):
 @login_required
 def home(request): 
 	# context = { 'workspaces': [w for w in request.user.profile_set.first().workspaces.all()], 'workspaceForm': LoginForm() }
+	profile = Profile.objects.get(user=request.user)
+
 	context = {}
+	context['workspaceForm'] = WorkspaceForm()
+	context['workspaces'] = Workspace.objects.filter(members=profile)
 	return render(request, 'doMe/home.html', context)
+
+@login_required
+def createWorkspace(request):
+	if request.method != 'POST':
+		return 
+	form = WorkspaceForm(request.POST)
+	if not form.is_valid():
+		context['errors'] = 'invalid workspace'
+		print('BAD')
+	else:
+		workspace = Workspace(Organization=form.cleaned_data['Organization'], 
+								description=form.cleaned_data['Description'],
+								admin = request.user)
+		workspace.save()
+		profile = Profile.objects.get(user=request.user)
+		print(profile)
+		workspace.members.add(profile)
+	return redirect(reverse('Home'))
 
 @login_required 
 def logout(request):
