@@ -36,7 +36,7 @@
                         <form method="POST" action="{% url 'CreateWorkspace' %}">
                         <table>{{ workspaceForm }}</table>
                         {% csrf_token %}
-                        <button type="button" class="btn btn-primary">Create Workspace</button>
+                        <button type="submit" class="btn btn-primary">Create Workspace</button>
                         </form>
                     </div>
 

@@ -8,7 +8,7 @@ class Profile(models.Model):
 	profilePicture = models.FileField(blank=True)
 
 	def __str__(self):
-		print('profile for', str(user))
+		return 'profile for ' +  str(self.user)
 
 class toDoItem(models.Model):
 	class Priority(models.IntegerChoices):

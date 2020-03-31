@@ -103,7 +103,7 @@ def createWorkspace(request):
 		context['errors'] = 'invalid workspace'
 		print('BAD')
 	else:
-		workspace = Workspace(Organization=form.cleaned_data['Organization'], 
+		workspace = Workspace(organization=form.cleaned_data['Organization'], 
 								description=form.cleaned_data['Description'],
 								admin = request.user)
 		workspace.save()
