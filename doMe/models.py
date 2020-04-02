@@ -10,7 +10,7 @@ class Profile(models.Model):
 	def __str__(self):
 		return 'profile for ' +  str(self.user)
 
-class toDoItem(models.Model):
+class ToDoItem(models.Model):
 	class Priority(models.IntegerChoices):
 		High = 1
 		Medium = 2
@@ -29,11 +29,11 @@ class Workspace(models.Model):
 	organization = models.CharField(max_length=30, default='My Workspace')
 	description = models.CharField(max_length=200)
 
-class doMeLists(models.Model):
+class DoMeLists(models.Model):
 	members = models.ManyToManyField(Profile, related_name = "members")
 	title = models.CharField(max_length=30, default='My doMeList')
 	description = models.CharField(max_length=200)
-	listItems = models.ManyToManyField(toDoItem)
-	workSpace = models.ManyToManyField(Workspace)
+	listItems = models.ManyToManyField(ToDoItem)
+	workspace = models.ManyToManyField(Workspace)
 	
 

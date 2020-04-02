@@ -11,7 +11,7 @@
 
         <div class="col">
             <br>
-            <h1 style="display: inline;"> My workspaces</h1>&nbsp;
+            <h1 style="display: inline;">{{title}}</h1>&nbsp;
             <button id='add-workspace' style="all: unset; cursor: pointer; display: inline; padding-bottom: 5px;" data-toggle="modal" data-target="#exampleModal">
                 <svg class="bi bi-plus-square" width="2em" height="2em" viewBox="0 0 20 20" fill="red" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 5px;">
                     <path fill-rule="evenodd" d="M8 3.5a.5.5 0 01.5.5v4a.5.5 0 01-.5.5H4a.5.5 0 010-1h3.5V4a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
@@ -26,17 +26,18 @@
                 <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">New Workspace</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">New {{pageType}}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                     </div>
 
                     <div class="modal-body">
-                        <form method="POST" action="{% url 'CreateWorkspace' %}">
-                        <table>{{ workspaceForm }}</table>
+                        <form method="POST" action="{% url createFunction %}">
+                        <table>{{ passedInForm }}</table>
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-primary">Create Workspace</button>
+                        <button type="submit" class="btn btn-primary">Create {{pageType}}</button>
+                        <input type='hidden' name='workspace' value={{workspace}}>
                         </form>
                     </div>
 
@@ -48,12 +49,30 @@
                 </div>
             </div>
             {% for workspace in workspaces %}
-            <div class="card" style="width: 20rem; border-radius: 30px;">
+            <div class="card" style="width: 90%; border-radius: 30px; 
+                /*border: 10px */
+                ">
                 <div class="card-body">
                     <h5 class="card-title">{{ workspace.organization }}</h5>
                     <p class="card-text mb-2 text-muted">{{ workspace.description }}</p>
                 </div>
+                <a href="{% url 'workspace' workspace.organization %}" class="stretched-link"></a>
             </div>
+            <br>
+            {% endfor %}
+
+            {% for l in lists %}
+            <div class="card" style="width: 30%; border-radius: 30px; 
+                /*border: 10px */
+                ">
+                <div class="card-body">
+                    <h5 class="card-title">{{ l.title }}</h5>
+                    {% for item in l.items %}
+                        <p class="card-text mb-2 text-muted">{{ item.title }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+            <br>
             {% endfor %}
 
         </div>

@@ -11,7 +11,7 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.models import User
 
 from doMe.forms import *
-from doMe.models import Workspace, Profile, toDoItem
+from doMe.models import *
 
 
 # Create your views here.
@@ -86,13 +86,52 @@ def login(request):
 
 @login_required
 def home(request): 
-	# context = { 'workspaces': [w for w in request.user.profile_set.first().workspaces.all()], 'workspaceForm': LoginForm() }
 	profile = Profile.objects.get(user=request.user)
 
 	context = {}
-	context['workspaceForm'] = WorkspaceForm()
+	context['passedInForm'] = WorkspaceForm()
+	# context['workspace'] = 'ignore'
+	context['title'] = 'My workspaces'
+	context['pageType'] = 'workspace'
+	context['createFunction'] = 'createWorkspace'
 	context['workspaces'] = Workspace.objects.filter(members=profile)
 	return render(request, 'doMe/home.html', context)
+
+@login_required
+def viewWorkspace(request, workspaceOrg):
+	profile = Profile.objects.get(user=request.user)
+
+	context = {}
+	context['passedInForm'] = ListForm()
+	context['workspace'] = workspaceOrg
+	current = Workspace.objects.get(organization = workspaceOrg)
+	context['lists'] = DoMeLists.objects.filter(workspace = current)
+	context['title'] = workspaceOrg
+	context['createFunction'] = 'createDoMeList'
+	context['pageType'] = 'doMe List'
+	return render(request, 'doMe/home.html', context)
+
+
+@login_required
+def createDoMeList(request):
+	if request.method != 'POST':
+		return 
+	form = ListForm(request.POST)
+	if not form.is_valid():
+		context = {'errors': 'invalid workspace'}
+		print('BAD')
+		return home(request)
+		# return render(request, 'doMe/home.html', context)
+	else:
+		List = DoMeLists(title=form.cleaned_data['title'], 
+						description=form.cleaned_data['description'])
+		List.save()
+		workspace = Workspace.objects.get(organization=request.POST['workspace'])
+		List.workspace.add(workspace)
+		profile = Profile.objects.get(user=request.user)
+		print(profile)
+		List.members.add(profile)
+	return redirect(reverse('Home'))
 
 @login_required
 def createWorkspace(request):
@@ -100,11 +139,13 @@ def createWorkspace(request):
 		return 
 	form = WorkspaceForm(request.POST)
 	if not form.is_valid():
-		context['errors'] = 'invalid workspace'
+		context = {'errors': 'invalid workspace'}
 		print('BAD')
+		return home(request)
+		# return render(request, 'doMe/home.html', context)
 	else:
-		workspace = Workspace(organization=form.cleaned_data['Organization'], 
-								description=form.cleaned_data['Description'],
+		workspace = Workspace(organization=form.cleaned_data['organization'], 
+								description=form.cleaned_data['description'],
 								admin = request.user)
 		workspace.save()
 		profile = Profile.objects.get(user=request.user)
