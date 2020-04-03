@@ -86,6 +86,10 @@ def login(request):
 
 @login_required
 def home(request): 
+	context = createHomeContext(request)
+	return render(request, 'doMe/home.html', context)
+
+def createHomeContext(request):
 	profile = Profile.objects.get(user=request.user)
 
 	context = {}
@@ -95,10 +99,14 @@ def home(request):
 	context['pageType'] = 'workspace'
 	context['createFunction'] = 'createWorkspace'
 	context['workspaces'] = Workspace.objects.filter(members=profile)
-	return render(request, 'doMe/home.html', context)
+	return context
 
 @login_required
 def viewWorkspace(request, workspaceOrg):
+	context = createWorkspaceContext(request, workspaceOrg)
+	return render(request, 'doMe/home.html', context)
+
+def createWorkspaceContext(request, workspaceOrg):
 	profile = Profile.objects.get(user=request.user)
 
 	context = {}
@@ -109,8 +117,7 @@ def viewWorkspace(request, workspaceOrg):
 	context['title'] = workspaceOrg
 	context['createFunction'] = 'createDoMeList'
 	context['pageType'] = 'doMe List'
-	return render(request, 'doMe/home.html', context)
-
+	return context
 
 @login_required
 def createDoMeList(request):
@@ -118,10 +125,10 @@ def createDoMeList(request):
 		return 
 	form = ListForm(request.POST)
 	if not form.is_valid():
-		context = {'errors': 'invalid workspace'}
 		print('BAD')
-		return home(request)
-		# return render(request, 'doMe/home.html', context)
+		context = createWorkspaceContext(request, request.POST['workspace'])
+		context['error']= 'List name taken'
+		return render(request, 'doMe/home.html', context)
 	else:
 		List = DoMeLists(title=form.cleaned_data['title'], 
 						description=form.cleaned_data['description'])
@@ -131,7 +138,7 @@ def createDoMeList(request):
 		profile = Profile.objects.get(user=request.user)
 		print(profile)
 		List.members.add(profile)
-	return redirect(reverse('Home'))
+	return redirect(reverse('workspace', args = (request.POST['workspace'],)))
 
 @login_required
 def createWorkspace(request):
@@ -139,10 +146,10 @@ def createWorkspace(request):
 		return 
 	form = WorkspaceForm(request.POST)
 	if not form.is_valid():
-		context = {'errors': 'invalid workspace'}
 		print('BAD')
-		return home(request)
-		# return render(request, 'doMe/home.html', context)
+		context = createHomeContext(request)
+		context['error']= 'organization name taken'
+		return render(request, 'doMe/home.html', context)
 	else:
 		workspace = Workspace(organization=form.cleaned_data['organization'], 
 								description=form.cleaned_data['description'],

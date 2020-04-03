@@ -8,9 +8,9 @@
 
 {% block content %}
     <div class="row">
-
         <div class="col">
             <br>
+                    <p style='color: red; '>{{ error }}</p>
             <h1 style="display: inline;">{{title}}</h1>&nbsp;
             <button id='add-workspace' style="all: unset; cursor: pointer; display: inline; padding-bottom: 5px;" data-toggle="modal" data-target="#exampleModal">
                 <svg class="bi bi-plus-square" width="2em" height="2em" viewBox="0 0 20 20" fill="red" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 5px;">
@@ -61,19 +61,21 @@
             <br>
             {% endfor %}
 
-            {% for l in lists %}
-            <div class="card" style="width: 30%; border-radius: 30px; 
-                /*border: 10px */
-                ">
-                <div class="card-body">
-                    <h5 class="card-title">{{ l.title }}</h5>
-                    {% for item in l.items %}
-                        <p class="card-text mb-2 text-muted">{{ item.title }}</p>
-                    {% endfor %}
-                </div>
+            <div class='container'>
+                {% for l in lists %}    
+                    {% if forloop.first %} <div class="row"> {% endif %}
+                    <div class="card" style="width: 30%; border-radius: 30px; margin:1%">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ l.title }}</h5>
+                            {% for item in l.items %}
+                                <p class="card-text mb-2 text-muted">{{ item.title }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% if forloop.counter|divisibleby:3 %}</div><div class="row"> {% endif %}
+                    {% if forloop.last %} </div> {% endif %}
+                {% endfor %}
             </div>
-            <br>
-            {% endfor %}
 
         </div>
 	</div>
