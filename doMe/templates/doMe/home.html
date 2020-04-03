@@ -12,7 +12,7 @@
             <br>
                     <p style='color: red; '>{{ error }}</p>
             <h1 style="display: inline;">{{title}}</h1>&nbsp;
-            <button id='add-workspace' style="all: unset; cursor: pointer; display: inline; padding-bottom: 5px;" data-toggle="modal" data-target="#exampleModal">
+            <button id='add-workspace' style="all: unset; cursor: pointer; display: inline; padding-bottom: 5px;" data-toggle="modal" data-target="#Modal1">
                 <svg class="bi bi-plus-square" width="2em" height="2em" viewBox="0 0 20 20" fill="red" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 5px;">
                     <path fill-rule="evenodd" d="M8 3.5a.5.5 0 01.5.5v4a.5.5 0 01-.5.5H4a.5.5 0 010-1h3.5V4a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
                     <path fill-rule="evenodd" d="M7.5 8a.5.5 0 01.5-.5h4a.5.5 0 010 1H8.5V12a.5.5 0 01-1 0V8z" clip-rule="evenodd"/>
@@ -22,7 +22,7 @@
             <br></br>
 
             <!-- Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="Modal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -48,6 +48,7 @@
                 </div>
                 </div>
             </div>
+
             {% for workspace in workspaces %}
             <div class="card" style="width: 90%; border-radius: 30px; 
                 /*border: 10px */
@@ -66,7 +67,14 @@
                     {% if forloop.first %} <div class="row"> {% endif %}
                     <div class="card" style="width: 30%; border-radius: 30px; margin:1%">
                         <div class="card-body">
-                            <h5 class="card-title">{{ l.title }}</h5>
+                            <h5 class="card-title" style="display: inline;">{{ l.title }}</h5>
+                        <button id='add-item' style="all: unset; cursor: pointer; display: inline; padding-bottom: 5px; " data-toggle="modal" data-target="#Modal_{{forloop.counter}}">
+                            <svg class="bi bi-plus-square" width="1.5em" height="2em" viewBox="0 0 20 20" fill="purple" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 5px; ">
+                                <path fill-rule="evenodd" d="M8 3.5a.5.5 0 01.5.5v4a.5.5 0 01-.5.5H4a.5.5 0 010-1h3.5V4a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                <path fill-rule="evenodd" d="M7.5 8a.5.5 0 01.5-.5h4a.5.5 0 010 1H8.5V12a.5.5 0 01-1 0V8z" clip-rule="evenodd"/>
+                                <path fill-rule="evenodd" d="M14 1H2a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V2a1 1 0 00-1-1zM2 0a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V2a2 2 0 00-2-2H2z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
                             {% for item in l.items %}
                                 <p class="card-text mb-2 text-muted">{{ item.title }}</p>
                             {% endfor %}
@@ -74,8 +82,41 @@
                     </div>
                     {% if forloop.counter|divisibleby:3 %}</div><div class="row"> {% endif %}
                     {% if forloop.last %} </div> {% endif %}
+
+
+            <!-- Modal for add item -->
+            <div class="modal fade" id="Modal_{{forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add to {{l.title}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <form method="POST" action="{% url createFunction %}">
+                            <table>{{ itemForm }}</table>
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">Add Item</button>
+                            <input type='hidden' name='workspace' value={{workspace}}>
+                            <input type='hidden' name='doMeList' value={{l.title}}>
+                        </form>
+                    </div>
+
+                    <!-- <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                    </div> -->
+                </div>
+                </div>
+            </div>
+
                 {% endfor %}
             </div>
+
+
 
         </div>
 	</div>

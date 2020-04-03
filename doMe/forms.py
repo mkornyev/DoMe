@@ -50,7 +50,13 @@ class ListForm(forms.Form):
 
 	# Unique title, but only within a workspace
 
-
+class ItemForm(forms.Form):
+	# priority = forms.IntegerField(choices = Priority.choices)
+	# user = models.ForeignKey(User, on_delete=models.PROTECT)
+	# title = models.CharField(max_length=30)
+	# description = models.CharField(max_length=150)
+	# dueDate = models.DateTimeField()
+	pass
 
 
 
