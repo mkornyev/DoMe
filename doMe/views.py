@@ -16,7 +16,7 @@ from doMe.models import Workspace, Profile, toDoItem
 
 # Create your views here.
 
-def landingPage(request): 
+def landingPage(request):
 	if request.user.is_authenticated:
 		return redirect(reverse('Home'))
 
@@ -45,6 +45,7 @@ def register(request):
 										email=form.cleaned_data['email'],
 										first_name=form.cleaned_data['first_name'],
 										last_name=form.cleaned_data['last_name'])
+
 	user.save()
 
 	profile = Profile(user=user)
