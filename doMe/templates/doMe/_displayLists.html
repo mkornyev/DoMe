@@ -1,0 +1,53 @@
+<div class='container'>
+    {% for l in lists %}    
+        {% if forloop.first %} <div class="row"> {% endif %}
+        <div class="card" style="width: 30%; border-radius: 30px; margin:1%">
+            <div class="card-body">
+                <h5 class="card-title" style="display: inline;">{{ l.title }}</h5>
+
+                <button id='add-item' style="all: unset; cursor: pointer; display: inline; padding-bottom: 5px; float: right;" data-toggle="modal" data-target="#Modal_{{forloop.counter}}">
+                    <svg class="bi bi-plus-circle-fill" width="1.2em" height="1.2em" viewBox="0 0 16 16" fill="purple" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M16 8A8 8 0 110 8a8 8 0 0116 0zM8.5 4a.5.5 0 00-1 0v3.5H4a.5.5 0 000 1h3.5V12a.5.5 0 001 0V8.5H12a.5.5 0 000-1H8.5V4z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+                
+                {% for item in l.items.all %}
+                    <p class="card-text mb-2 text-muted">{{ item.title }}</p>
+                {% endfor %}
+            </div>
+        </div>
+        {% if forloop.counter|divisibleby:3 %}</div><div class="row"> {% endif %}
+        {% if forloop.last %} </div> {% endif %}
+
+
+<!-- Modal for add item -->
+<div class="modal fade" id="Modal_{{forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add to {{l.title}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+
+        <div class="modal-body">
+            <form method="POST" action="{% url createFunction %}">
+                <table>{{ itemForm }}</table>
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Add Item</button>
+                <input type='hidden' name='workspace' value={{workspace}}>
+                <input type='hidden' name='doMeList' value={{l.title}}>
+            </form>
+        </div>
+
+        <!-- <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+        </div> -->
+    </div>
+    </div>
+</div>
+
+    {% endfor %}
+</div>

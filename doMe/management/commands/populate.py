@@ -21,7 +21,7 @@ class Command(BaseCommand):
         workspace = Workspace(organization='Home', description='Your private workspace.', admin=user)
         workspace.save()
         workspace.members.add(user) 
-        workspace.lists.all(homeList)
+        workspace.lists.add(homeList)
 
         print("\nBob Jones User, Workspace, and List created: (User: bj | Pass: bj)\n")
 
