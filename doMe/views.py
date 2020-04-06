@@ -27,7 +27,7 @@ def landingPage(request):
 
 def register(request):
 	if request.method != 'POST':
-		return 
+		return redirect(reverse('Landing Page'))
 
 	context = {}
 	context['registrationForm'] = RegistrationForm(request.POST)
@@ -72,7 +72,7 @@ def login(request):
 		return redirect(reverse('Home'))
 
 	if request.method != 'POST':
-		return 
+		return redirect(reverse('Landing Page'))
 
 	context = {} 
 	form = LoginForm(request.POST)
@@ -136,7 +136,7 @@ def createViewWorkspaceContext(request, id):
 @login_required
 def createWorkspace(request):
 	if request.method != 'POST':
-		return 
+		return redirect(reverse('Landing Page'))
 
 	form = WorkspaceForm(request.POST)
 	if not form.is_valid():
@@ -158,7 +158,7 @@ def createWorkspace(request):
 @login_required
 def createDoMeList(request):
 	if request.method != 'POST':
-		return 
+		redirect(reverse('Landing Page'))
 
 	form = ListForm(request.POST)
 
@@ -177,11 +177,13 @@ def createDoMeList(request):
 @login_required
 def viewList(request, id):
 	if request.method != 'POST' or not 'workspaceId' in request.POST:
-		return 
+		return redirect(reverse('Landing Page'))
+
 	workspace = get_object_or_404(Workspace, id=request.POST['workspaceId'])
-	list = get_object_or_404(List, id=id)
+	currList = get_object_or_404(List, id=id)
 
 	if request.user not in workspace.members.all():
 		raise Http404
 
-	return render(request, 'doMe/home.html', context)
+	context = { 'list': currList } 
+	return render(request, 'doMe/list.html', context)
