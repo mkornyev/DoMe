@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate
 from django.db import models
 from doMe.models import *
 
-INPUT_ATTRIBUTES = {'class' : 'form-input'}
+INPUT_ATTRIBUTES = {'class' : 'form-input form-control'}
 MAX_UPLOAD_SIZE = 2500000
 
 
@@ -87,10 +87,15 @@ class ListForm(forms.Form):
 	# Unique title, but only within a workspace
 
 class ItemForm(forms.Form):
-	priority = forms.ChoiceField(widget=forms.RadioSelect, choices=Priority.choices)
+	priority = forms.CharField(widget=forms.Select(choices=Priority.choices, attrs={'class':'form-input form-select'}))
 	title = forms.CharField(max_length=30, widget=forms.TextInput(attrs=INPUT_ATTRIBUTES))
-	description = forms.CharField(max_length=150, widget=forms.TextInput(attrs=INPUT_ATTRIBUTES))
-	dueDate = forms.DateTimeField(widget=forms.TextInput(attrs=INPUT_ATTRIBUTES))
+	# dueDate = forms.DateTimeField(label='Due Date ',
+    #     input_formats=['%d/%m/%Y %H:%M'],
+    #     widget=forms.DateTimeInput(attrs={
+    #         'class': 'form-control datetimepicker-input',
+    #         'data-target': '#datetimepicker'
+    #     })
+    # )
 
 	def clean_dueDate(self):
 		dueDate = self.cleaned_data.get('dueDate')
