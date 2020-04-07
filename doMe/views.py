@@ -131,6 +131,7 @@ def createViewWorkspaceContext(request, id):
 	context['title'] = workspace.organization
 	context['createFunction'] = 'createDoMeList'
 	context['pageType'] = 'doMe List'
+	context['itemForm'] = ItemForm()
 	return context
 
 @login_required
@@ -163,7 +164,7 @@ def createDoMeList(request):
 	form = ListForm(request.POST)
 
 	if not form.is_valid():
-		context = createViewWorkspaceContext(request, request.POST['workspace'])
+		context = createViewWorkspaceContext(request, request.POST['workspaceId'])
 		context['error']= 'List name taken'
 		return render(request, 'doMe/home.html', context)
 	else:
@@ -173,6 +174,31 @@ def createDoMeList(request):
 		workspace = get_object_or_404(Workspace, id=request.POST['workspaceId'])
 		workspace.lists.add(newList)
 	return redirect(reverse('getWorkspace', args = (workspace.id,)))
+
+@login_required
+def createDoMeItem(request):
+	if request.method != 'POST':
+		return 
+
+	form = ItemForm(request.POST)
+
+	if not form.is_valid():
+		context = createViewWorkspaceContext(request, request.POST['workspaceId'])
+		context['error']= 'Invalid Date'
+		return render(request, 'doMe/home.html', context)
+	else:
+		newItem = Item(title=form.cleaned_data['title'], 
+						description=form.cleaned_data['description'],
+						user = request.user,
+						priority = form.cleaned_data['priority'],
+						dueDate = form.cleaned_data['dueDate'])
+		newItem.save()
+
+		current = get_object_or_404(List, id=request.POST['doMeListId'])
+		current.items.add(newItem)
+	print('***', request.POST)
+	print('**', request.POST['workspaceId'])
+	return redirect(reverse('getWorkspace', args = (request.POST['workspaceId'],)))
 
 @login_required
 def viewList(request, id):

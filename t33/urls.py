@@ -28,11 +28,17 @@ urlpatterns = [
     path('logout/', views.logout, name='Logout'),
     path('about/', views.about, name='About'),
 
-    # Objects
-    path('createWorkspace', views.createWorkspace, name='createWorkspace'),
+    # Page Views
     path('workspace/<int:id>', views.viewWorkspace, name='getWorkspace'),
+    path('list/<int:id>', views.viewList, name='getList'),
 
+    # Create
+    path('createWorkspace', views.createWorkspace, name='createWorkspace'),
     path('createDoMeList', views.createDoMeList, name='createDoMeList'),
+
     path('list/<int:id>', views.viewList, name='getList'),
     path('addItem/', views.addItem, name='addItem'),
+
+#     path('createDoMeItem', views.createDoMeItem, name='createDoMeItem'),    
+
 ]
