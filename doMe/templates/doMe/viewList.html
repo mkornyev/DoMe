@@ -1,0 +1,55 @@
+{% extends "doMe/base.html" %}
+
+{% block page_specific_styles %}
+<!-- Tempus Dominus Bootstrap 4 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css" integrity="sha256-XPTBwC3SBoWHSmKasAk01c08M6sIA5gF5+sRxqak2Qs=" crossorigin="anonymous" />
+{% endblock %}
+
+{% block title %}{% block navtitle %}
+	{{ list.title }} 
+{% endblock %}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col">
+            
+            <!-- Workspaces Header -->
+            <br>
+            <p style='color: red; '>{{ error }}</p>
+            <h1 style="display: inline;">{{list.title}}</h1>
+            <p>{{ list.description }}</p><br>
+
+            {% for item in items %}
+                <div class="card item">
+                    <div class="card-body">
+                        <h2 class="item-title">{{ item.title }} &nbsp;&nbsp;&nbsp;</h2>
+                        <p class="item-description">{{ item.description }} &nbsp;&nbsp;&nbsp;</p>
+                        <p class="item-author">{{ user.first_name|add:' '|add:user.last_name }}</p>
+                        <p class="item-date">on {{ item.created_at }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+
+            {% include 'doMe/_listItem.html' %}
+
+        </div>
+	</div>
+{% endblock %}
+
+{% block page_specific_scripts %}
+<script>
+    $(function () {
+      $("#datetimepicker").datetimepicker({
+        format: 'DD/MM/YYYY HH:mm',
+      });
+    });
+</script>
+
+{% load static %}
+<script src="{% static 'doMe/itemScripts.js' %}"></script>
+
+<!-- Moment.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js" integrity="sha256-VBLiveTKyUZMEzJd6z2mhfxIqz3ZATCuVMawPZGzIfA=" crossorigin="anonymous"></script>
+<!-- Tempus Dominus Bootstrap 4 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js" integrity="sha256-z0oKYg6xiLq3yJGsp/LsY9XykbweQlHl42jHv2XTBz4=" crossorigin="anonymous"></script>
+{% endblock %}

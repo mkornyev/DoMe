@@ -27,7 +27,7 @@ def landingPage(request):
 
 def register(request):
 	if request.method != 'POST':
-		return 
+		return redirect(reverse('Landing Page'))
 
 	context = {}
 	context['registrationForm'] = RegistrationForm(request.POST)
@@ -72,7 +72,7 @@ def login(request):
 		return redirect(reverse('Home'))
 
 	if request.method != 'POST':
-		return 
+		return redirect(reverse('Landing Page'))
 
 	context = {} 
 	form = LoginForm(request.POST)
@@ -137,7 +137,7 @@ def createViewWorkspaceContext(request, id):
 @login_required
 def createWorkspace(request):
 	if request.method != 'POST':
-		return 
+		return redirect(reverse('Landing Page'))
 
 	form = WorkspaceForm(request.POST)
 	if not form.is_valid():
@@ -159,7 +159,7 @@ def createWorkspace(request):
 @login_required
 def createDoMeList(request):
 	if request.method != 'POST':
-		return 
+		redirect(reverse('Landing Page'))
 
 	form = ListForm(request.POST)
 
@@ -203,11 +203,43 @@ def createDoMeItem(request):
 @login_required
 def viewList(request, id):
 	if request.method != 'POST' or not 'workspaceId' in request.POST:
-		return 
+		return redirect(reverse('Landing Page'))
+
 	workspace = get_object_or_404(Workspace, id=request.POST['workspaceId'])
-	list = get_object_or_404(List, id=id)
+	currList = get_object_or_404(List, id=id)
 
 	if request.user not in workspace.members.all():
 		raise Http404
 
-	return render(request, 'doMe/home.html', context)
+	context = { 'list': currList, 'items': currList.items.all(), 'itemForm': ItemForm() } 
+	return render(request, 'doMe/viewList.html', context)
+
+@login_required
+def addItem(request):
+	if request.method != 'POST' or 'description' not in request.POST or 'dueDate' not in request.POST or 'listId' not in request.POST:
+		return redirect(reverse('Landing Page'))
+	
+	currList = get_object_or_404(List, id=request.POST['listId'])	
+	form = ItemForm(request.POST)
+
+	if not form.is_valid():
+		context = { 'list': currList, 'items': currList.items.all(), 'itemForm': form } 
+		return render(request, 'doMe/viewList.html', context)
+
+	item = Item(user=request.user, 
+				order=currList.items.count(), 				
+				priority=form.cleaned_data['priority'], 
+				title=form.cleaned_data['title'], 
+				# dueDate=request.POST['dueDate'], 
+				dueDate=datetime.now(), # BUG need to convert dueDate to datetime object
+				description=request.POST['description'])
+	item.save() 
+	currList.items.add(item)
+
+	context = { 'list': currList, 'items': currList.items.all(), 'itemForm': ItemForm() } 
+	return render(request, 'doMe/viewList.html', context)
+
+	# return redirect(reverse('getList', args = (request.POST['listId'],)))
+	
+
+	

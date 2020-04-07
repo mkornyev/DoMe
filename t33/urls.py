@@ -35,5 +35,10 @@ urlpatterns = [
     # Create
     path('createWorkspace', views.createWorkspace, name='createWorkspace'),
     path('createDoMeList', views.createDoMeList, name='createDoMeList'),
-    path('createDoMeItem', views.createDoMeItem, name='createDoMeItem'),    
+
+    path('list/<int:id>', views.viewList, name='getList'),
+    path('addItem/', views.addItem, name='addItem'),
+
+#     path('createDoMeItem', views.createDoMeItem, name='createDoMeItem'),    
+
 ]

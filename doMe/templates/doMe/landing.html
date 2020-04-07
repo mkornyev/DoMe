@@ -42,3 +42,8 @@
 
 	</div>
 {% endblock %}
+
+{% block page_specific_scripts %}
+{% load static %}
+<script src="{% static 'doMe/main.js' %}" type="text/javascript"></script>
+{% endblock %}

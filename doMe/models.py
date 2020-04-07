@@ -17,9 +17,10 @@ class User(AbstractUser):
 		print("---\nUsername: " + self.get_username() + "\nFirst name: " + self.first_name + "\nLast name: " + self.last_name + "\nEmail: " + self.email + "\nActive:" + str(self.is_active) + "\n---")
 
 class Priority(models.IntegerChoices):
-		High = 1
-		Medium = 2
 		Low = 3
+		Medium = 2
+		High = 1
+		
 
 class Item(models.Model):
 	user = models.ForeignKey(User, on_delete=models.PROTECT)
@@ -31,6 +32,10 @@ class Item(models.Model):
 	title = models.CharField(max_length=30)
 	description = models.CharField(max_length=150)
 	dueDate = models.DateTimeField(blank=True, null=True)
+	created_at = models.DateTimeField(default=datetime.now())
+
+	class Meta:
+		ordering = ['order']
 
 class List(models.Model):
 	items = models.ManyToManyField(Item, related_name='list')
