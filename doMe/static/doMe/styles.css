@@ -4,6 +4,15 @@
     /* background-color: #EE9480; */
 }
 
+ul
+{
+    list-style-type: none;
+}
+
+.priority-list {
+    list-style-type: circle;
+}
+
 html {
     /* background-color: #EE9480; */
     width: 100%;

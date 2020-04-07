@@ -26,12 +26,14 @@ urlpatterns = [
     path('login/', views.login, name = 'Login'),
     path('register/', views.register, name='Register'),
     path('logout/', views.logout, name='Logout'),
-
-    # Objects
-    path('createWorkspace', views.createWorkspace, name='createWorkspace'),
-    path('workspace/<int:id>', views.viewWorkspace, name='getWorkspace'),
-
-    path('createDoMeList', views.createDoMeList, name='createDoMeList'),
-    path('list/<int:id>', views.viewList, name='getList'),
     path('about/', views.about, name='About'),
+
+    # Page Views
+    path('workspace/<int:id>', views.viewWorkspace, name='getWorkspace'),
+    path('list/<int:id>', views.viewList, name='getList'),
+
+    # Create
+    path('createWorkspace', views.createWorkspace, name='createWorkspace'),
+    path('createDoMeList', views.createDoMeList, name='createDoMeList'),
+    path('createDoMeItem', views.createDoMeItem, name='createDoMeItem'),    
 ]

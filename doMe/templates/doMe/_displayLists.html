@@ -11,9 +11,11 @@
                     </svg>
                 </button>
                 
+                <ul class='priority-list'>
                 {% for item in l.items.all %}
-                    <p class="card-text mb-2 text-muted">{{ item.title }}</p>
+                    <li class="card-text mb-2 text-muted">{{ item.title }}</li>
                 {% endfor %}
+                </ul>
             </div>
         </div>
         {% if forloop.counter|divisibleby:3 %}</div><div class="row"> {% endif %}
@@ -32,12 +34,12 @@
         </div>
 
         <div class="modal-body">
-            <form method="POST" action="{% url createFunction %}">
+            <form method="POST" action="{% url 'createDoMeItem' %}">
                 <table>{{ itemForm }}</table>
                 {% csrf_token %}
                 <button type="submit" class="btn btn-primary">Add Item</button>
-                <input type='hidden' name='workspace' value={{workspace}}>
-                <input type='hidden' name='doMeList' value={{l.title}}>
+                <input type='hidden' name='workspaceId' value={{workspaceId}}>
+                <input type='hidden' name='doMeListId' value={{l.id}}>
             </form>
         </div>
 

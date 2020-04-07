@@ -90,11 +90,11 @@ class ItemForm(forms.Form):
 	priority = forms.ChoiceField(widget=forms.RadioSelect, choices=Priority.choices)
 	title = forms.CharField(max_length=30, widget=forms.TextInput(attrs=INPUT_ATTRIBUTES))
 	description = forms.CharField(max_length=150, widget=forms.TextInput(attrs=INPUT_ATTRIBUTES))
-	dueDate = forms.DateTimeField(widget=forms.TextInput(attrs=INPUT_ATTRIBUTES))
+	dueDate = forms.DateField(label = 'Due date', widget=forms.TextInput(attrs=INPUT_ATTRIBUTES),initial=datetime.now().date())
 
 	def clean_dueDate(self):
 		dueDate = self.cleaned_data.get('dueDate')
-		if dueDate > datetime.now():
+		if dueDate < datetime.now().date():
 			raise forms.ValidationError("Due Date must be in the future.")
 		return dueDate
 	
