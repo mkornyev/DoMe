@@ -1,0 +1,45 @@
+<div class="card item mt-4" style="">
+    <div class="card-body">
+        <form method="POST" action="{% url 'addItem' %}">
+            {% csrf_token %}
+            <input type='hidden' name='listId' class="form-control form-input" value="{{ list.id }}">
+            <input id='newItemInput' type='text' name='description' class="form-control form-input" style="width: calc(100% - 100px);" placeholder='Add a new toDo item...'>
+            <button type="button" class="btn-lg btn-link" style="width: 83px; background-color:white; border: none;" onclick="validateItem(event);" data-toggle="modal" data-target="#addItemModal">Add</button>
+
+            <!-- Add Item Modal -->
+            <div class="modal fade" id="addItemModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add New Item</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+
+                    <div id='itemPreview' class="modal-body" style="border-bottom: 1px solid #dee2e6;"></div> 
+
+                    <div class="modal-body">
+                        <table>{{ itemForm }}</table>
+
+                        <div class="input-group date" id="datetimepicker" data-target-input="nearest">
+                            <label for="dueDate"><b>Due Date:</b></label>
+                            <input id="dueDate" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker" name="dueDate" placeholder="--/--/--"/>
+                            <div class="input-group-append" data-target="#datetimepicker" data-toggle="datetimepicker">
+                                <div class="input-group-text">Select Date</div>
+                            </div>
+                        </div>
+                          
+                    </div>
+                    
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+            
+        </form>
+    </div>
+</div>

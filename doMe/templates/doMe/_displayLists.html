@@ -1,7 +1,7 @@
 <div class='container'>
     {% for l in lists %}    
         {% if forloop.first %} <div class="row"> {% endif %}
-        <div class="card" style="width: 30%; border-radius: 30px; margin:1%">
+        <div class="card list">
             <div class="card-body">
                 <h5 class="card-title" style="display: inline;">{{ l.title }}</h5>
 
@@ -15,6 +15,14 @@
                     <p class="card-text mb-2 text-muted">{{ item.title }}</p>
                 {% endfor %}
             </div>
+
+            <!-- View List Link -->
+            <form method="POST" action="{% url 'getList' l.id %}">
+                <input type='hidden' name='workspaceId' value={{workspaceId}}>
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link stretched-link"></button>
+            </form>
+            
         </div>
         {% if forloop.counter|divisibleby:3 %}</div><div class="row"> {% endif %}
         {% if forloop.last %} </div> {% endif %}

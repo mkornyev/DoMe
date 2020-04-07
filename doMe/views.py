@@ -185,5 +185,35 @@ def viewList(request, id):
 	if request.user not in workspace.members.all():
 		raise Http404
 
-	context = { 'list': currList } 
-	return render(request, 'doMe/list.html', context)
+	context = { 'list': currList, 'items': currList.items.all(), 'itemForm': ItemForm() } 
+	return render(request, 'doMe/viewList.html', context)
+
+@login_required
+def addItem(request):
+	if request.method != 'POST' or 'description' not in request.POST or 'dueDate' not in request.POST or 'listId' not in request.POST:
+		return redirect(reverse('Landing Page'))
+	
+	currList = get_object_or_404(List, id=request.POST['listId'])	
+	form = ItemForm(request.POST)
+
+	if not form.is_valid():
+		context = { 'list': currList, 'items': currList.items.all(), 'itemForm': form } 
+		return render(request, 'doMe/viewList.html', context)
+
+	item = Item(user=request.user, 
+				order=currList.items.count(), 				
+				priority=form.cleaned_data['priority'], 
+				title=form.cleaned_data['title'], 
+				# dueDate=request.POST['dueDate'], 
+				dueDate=datetime.now(), # BUG need to convert dueDate to datetime object
+				description=request.POST['description'])
+	item.save() 
+	currList.items.add(item)
+
+	context = { 'list': currList, 'items': currList.items.all(), 'itemForm': ItemForm() } 
+	return render(request, 'doMe/viewList.html', context)
+
+	# return redirect(reverse('getList', args = (request.POST['listId'],)))
+	
+
+	

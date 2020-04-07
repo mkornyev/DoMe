@@ -26,6 +26,7 @@ urlpatterns = [
     path('login/', views.login, name = 'Login'),
     path('register/', views.register, name='Register'),
     path('logout/', views.logout, name='Logout'),
+    path('about/', views.about, name='About'),
 
     # Objects
     path('createWorkspace', views.createWorkspace, name='createWorkspace'),
@@ -33,5 +34,5 @@ urlpatterns = [
 
     path('createDoMeList', views.createDoMeList, name='createDoMeList'),
     path('list/<int:id>', views.viewList, name='getList'),
-    path('about/', views.about, name='About'),
+    path('addItem/', views.addItem, name='addItem'),
 ]
