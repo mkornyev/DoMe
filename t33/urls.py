@@ -38,7 +38,6 @@ urlpatterns = [
 
     path('list/<int:id>', views.viewList, name='getList'),
     path('addItem/', views.addItem, name='addItem'),
-
-#     path('createDoMeItem', views.createDoMeItem, name='createDoMeItem'),    
+    path('createDoMeItem', views.createDoMeItem, name='createDoMeItem'),    
 
 ]

@@ -1,7 +1,7 @@
 {% extends "doMe/base.html" %}
 
 {% block page_specific_styles %}
-<!-- Tempus Dominus Bootstrap 4 -->
+<!-- Calendar widget scripts -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css" integrity="sha256-XPTBwC3SBoWHSmKasAk01c08M6sIA5gF5+sRxqak2Qs=" crossorigin="anonymous" />
 {% endblock %}
 
@@ -25,7 +25,7 @@
                         <h2 class="item-title">{{ item.title }} &nbsp;&nbsp;&nbsp;</h2>
                         <p class="item-description">{{ item.description }} &nbsp;&nbsp;&nbsp;</p>
                         <p class="item-author">{{ user.first_name|add:' '|add:user.last_name }}</p>
-                        <p class="item-date">on {{ item.created_at }}</p>
+                        <p class="item-date">on {{ item.created_at }} | due on {{ item.dueDate }}</p>
                     </div>
                 </div>
             {% endfor %}
@@ -48,8 +48,7 @@
 {% load static %}
 <script src="{% static 'doMe/itemScripts.js' %}"></script>
 
-<!-- Moment.js -->
+<!-- Calendar widget scripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js" integrity="sha256-VBLiveTKyUZMEzJd6z2mhfxIqz3ZATCuVMawPZGzIfA=" crossorigin="anonymous"></script>
-<!-- Tempus Dominus Bootstrap 4 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js" integrity="sha256-z0oKYg6xiLq3yJGsp/LsY9XykbweQlHl42jHv2XTBz4=" crossorigin="anonymous"></script>
 {% endblock %}

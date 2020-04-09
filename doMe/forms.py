@@ -88,23 +88,35 @@ class ListForm(forms.Form):
 
 class ItemForm(forms.Form):
 	priority = forms.CharField(widget=forms.Select(choices=Priority.choices, attrs={'class':'form-input form-select'}))
-	title = forms.CharField(max_length=30, widget=forms.TextInput(attrs=INPUT_ATTRIBUTES))
-	# dueDate = forms.DateTimeField(label='Due Date ',
-    #     input_formats=['%d/%m/%Y %H:%M'],
-    #     widget=forms.DateTimeInput(attrs={
-    #         'class': 'form-control datetimepicker-input',
-    #         'data-target': '#datetimepicker'
-    #     })
-    # )
-    
-# 	description = forms.CharField(max_length=150, widget=forms.TextInput(attrs=INPUT_ATTRIBUTES))
-# 	dueDate = forms.DateField(label = 'Due date', widget=forms.TextInput(attrs=INPUT_ATTRIBUTES),initial=datetime.now().date())
+	title = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'class': 'form-input form-control', 'placeholder': 'Add a title...'}))
+	dueDate = forms.DateTimeField(input_formats=['%d/%m/%Y %H:%M'], 
+		widget=forms.DateTimeInput(attrs={'class': 'form-control datetimepicker-input', 'data-target': '#datetimepicker', 'style':'border-radius: .25rem; display: inline-block;'}))
+
+class WorkspaceItemForm(forms.Form):
+	priority = forms.CharField(widget=forms.Select(choices=Priority.choices, attrs={'class':'form-input form-select'}))
+	title = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'class': 'form-input form-control', 'placeholder': 'Add a short title...'}))
+	description = forms.CharField(max_length=150, widget=forms.TextInput(attrs={'class': 'form-input form-control', 'placeholder': 'Add a main description...'}))
+	# dueDate = forms.DateTimeField(input_formats=['%d/%m/%Y %H:%M'], 
+	# 	widget=forms.DateTimeInput(attrs={'class': 'form-control datetimepicker-input', 'data-target': '#datetimepicker', 'style':'border-radius: .25rem; display: inline-block;'}))
 
 	def clean_dueDate(self):
-		dueDate = self.cleaned_data.get('dueDate')
-		if dueDate < datetime.now().date():
-			raise forms.ValidationError("Due Date must be in the future.")
-		return dueDate
+		dueDate = self.cleaned_data['dueDate']
+		dateObj = datetime.strptime(dueDate, '%d/%m/%Y %H:%M')
+		return dateObj
+	
+	# def clean_dueDate(self):
+	# 	dueDate = self.cleaned_data.get('dueDate')
+	# 	if dueDate < datetime.now():
+	# 		raise forms.ValidationError("Due Date must be in the future.")
+	# 	return dueDate
+
+	# dueDate = forms.DateTimeField(label='Due Date ',
+	#     input_formats=['%d/%m/%Y %H:%M'],
+	#     widget=forms.DateTimeInput(attrs={
+	#         'class': 'form-control datetimepicker-input',
+	#         'data-target': '#datetimepicker'
+	#     })
+	# 
 	
 	# def clean_priority(self):
 	# 	priority = self.cleaned_data.get('priority')

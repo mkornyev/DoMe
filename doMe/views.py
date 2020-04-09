@@ -131,7 +131,7 @@ def createViewWorkspaceContext(request, id):
 	context['title'] = workspace.organization
 	context['createFunction'] = 'createDoMeList'
 	context['pageType'] = 'doMe List'
-	context['itemForm'] = ItemForm()
+	context['itemForm'] = WorkspaceItemForm()
 	return context
 
 @login_required
@@ -177,27 +177,33 @@ def createDoMeList(request):
 
 @login_required
 def createDoMeItem(request):
-	if request.method != 'POST':
+	if request.method != 'POST' or 'dueDate' not in request.POST:
 		return 
 
-	form = ItemForm(request.POST)
+	form = WorkspaceItemForm(request.POST)
+	try: 
+		date = datetime.strptime(request.POST['dueDate'], '%d/%m/%Y %H:%M')
+	except: 
+		context = createViewWorkspaceContext(request, request.POST['workspaceId'])
+		context['error']= 'Invalid Date'
+		return render(request, 'doMe/home.html', context)
 
 	if not form.is_valid():
 		context = createViewWorkspaceContext(request, request.POST['workspaceId'])
 		context['error']= 'Invalid Date'
 		return render(request, 'doMe/home.html', context)
 	else:
+		current = get_object_or_404(List, id=request.POST['doMeListId'])
+
 		newItem = Item(title=form.cleaned_data['title'], 
 						description=form.cleaned_data['description'],
 						user = request.user,
+						order = current.items.count(),
 						priority = form.cleaned_data['priority'],
-						dueDate = form.cleaned_data['dueDate'])
+						dueDate = date)
 		newItem.save()
 
-		current = get_object_or_404(List, id=request.POST['doMeListId'])
 		current.items.add(newItem)
-	print('***', request.POST)
-	print('**', request.POST['workspaceId'])
 	return redirect(reverse('getWorkspace', args = (request.POST['workspaceId'],)))
 
 @login_required
@@ -222,7 +228,14 @@ def addItem(request):
 	currList = get_object_or_404(List, id=request.POST['listId'])	
 	form = ItemForm(request.POST)
 
-	if not form.is_valid():
+	try: 
+		date = datetime.strptime(request.POST['dueDate'], '%d/%m/%Y %H:%M')
+	except: 
+		context = { 'list': currList, 'items': currList.items.all(), 'itemForm': form } 
+		context['error']= 'Invalid Date'
+		return render(request, 'doMe/home.html', context)
+
+	if not form.is_valid() or date == None:
 		context = { 'list': currList, 'items': currList.items.all(), 'itemForm': form } 
 		return render(request, 'doMe/viewList.html', context)
 
@@ -230,16 +243,13 @@ def addItem(request):
 				order=currList.items.count(), 				
 				priority=form.cleaned_data['priority'], 
 				title=form.cleaned_data['title'], 
-				# dueDate=request.POST['dueDate'], 
-				dueDate=datetime.now(), # BUG need to convert dueDate to datetime object
+				dueDate=date, 
 				description=request.POST['description'])
 	item.save() 
 	currList.items.add(item)
 
 	context = { 'list': currList, 'items': currList.items.all(), 'itemForm': ItemForm() } 
 	return render(request, 'doMe/viewList.html', context)
-
-	# return redirect(reverse('getList', args = (request.POST['listId'],)))
 	
 
 	

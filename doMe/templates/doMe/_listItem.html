@@ -20,15 +20,22 @@
                     <div id='itemPreview' class="modal-body" style="border-bottom: 1px solid #dee2e6;"></div> 
 
                     <div class="modal-body">
-                        <table>{{ itemForm }}</table>
+                        <table>
+                            <tr><th><label for="id_priority">Priority:</label></th>
+                            <td>{{ itemForm.priority }}</td></tr>
+                            <tr><th><label for="id_title">Title:</label></th>
+                            <td>{{ itemForm.title }}</td></tr>
+                        </table>                          
 
-                        <div class="input-group date" id="datetimepicker" data-target-input="nearest">
-                            <label for="dueDate"><b>Due Date:</b></label>
-                            <input id="dueDate" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker" name="dueDate" placeholder="--/--/--"/>
-                            <div class="input-group-append" data-target="#datetimepicker" data-toggle="datetimepicker">
-                                <div class="input-group-text">Select Date</div>
+                        <label><b>Due Date:</b>
+                            <div class="input-group date" id="datetimepicker" data-target-input="nearest" style="display: inline-block;">
+                                {{ itemForm.dueDate }}
+                                <!-- <input id="dueDate" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker" name="dueDate" placeholder="--/--/--"/> -->
+                                <div class="input-group-append" data-target="#datetimepicker" data-toggle="datetimepicker">
+                                    <div class="input-group-text">Select Date</div>
+                                </div>
                             </div>
-                        </div>
+                        </label>
                           
                     </div>
                     
@@ -42,4 +49,4 @@
             
         </form>
     </div>
-</div>
+</div><br>
