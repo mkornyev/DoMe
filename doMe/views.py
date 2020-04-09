@@ -110,6 +110,7 @@ def createHomeContext(request):
 	context['pageType'] = 'workspace'
 	context['createFunction'] = 'createWorkspace'
 	context['workspaces'] = Workspace.objects.filter(members=request.user)
+	context['users'] = User.objects.exclude(id=request.user.id)
 
 	return context
 

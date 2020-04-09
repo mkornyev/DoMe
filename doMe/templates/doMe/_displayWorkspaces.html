@@ -1,10 +1,60 @@
 {% for workspace in workspaces %}
 <div class="card workspace">
-    <div class="card-body">
+    <div class="card-body" style="position: relative;">
         <h5 class="card-title">{{ workspace.organization }}</h5>
+
+        <div style="position: absolute; top: 15px; right: 10px; z-index: 10;">
+            <button class="btn btn-link" type='button' data-toggle="modal" data-target="#exampleModal{{ workspace.organization }}" >
+                {{ workspace.members.count }} Members | <span style="width: 50px; height: 50px; border-radius: 50%;">+</span>
+            </button>
+        </div>
+
         <p class="card-text mb-2 text-muted">{{ workspace.description }}</p>
     </div>
     <a href="{% url 'getWorkspace' workspace.id %}" class="stretched-link"></a>
 </div>
+  
+<!-- Modal -->
+<div class="modal fade" id="exampleModal{{ workspace.organization }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">{{ workspace.organization }} | Members</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+
+        <p>Shared With:</p>
+        <div style="max-height: 15vh; overflow-y: scroll;">
+            {% for user in workspace.members.all %}
+                <a href="{% url 'Home' %}">
+                    <div style="background-color: blue; border-radius: 50%; width: 25px; height: 25px; display: inline-block">.</div>&nbsp;{{ user.first_name|add:' '|add:user.last_name }} | {{ user.username }} 
+                </a>
+            {% endfor %}
+        </div>
+
+        <hr>
+
+        <div>Add Members:</div>
+        <input id="searchBar-{{ workspace.id }}" class="form-control mr-sm-2" type="search" placeholder="Add a user" aria-label="Search" style="display: inline-block; width: 70%;">
+        <button class="btn btn-primary my-2 my-sm-0" type="submit" onclick="searchMembers();">Search</button><br><br>
+
+        <div style="max-height: 15vh; overflow-y: scroll;">
+            {% for user in users %}
+                <a href="{% url 'Home' %}">
+                    <div style="background-color: blue; border-radius: 50%; width: 25px; height: 25px; display: inline-block">.</div>&nbsp;{{ user.first_name|add:' '|add:user.last_name }} | {{ user.username }} 
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+    </div>
+    </div>
+</div>
+</div>
+
 <br>
 {% endfor %}

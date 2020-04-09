@@ -4,8 +4,8 @@
         <div class="card list">
             <div class="card-body">
                 <h5 class="card-title" style="display: inline;">{{ l.title }}</h5>
-
-                <button id='add-item' style="all: unset; cursor: pointer; display: inline; padding-bottom: 5px; float: right;" data-toggle="modal" data-target="#Modal_{{forloop.counter}}">
+                
+                <button id='add-item' style="all: unset; cursor: pointer; padding-bottom: 5px; top: 20px; right: 20px; position: absolute; z-index: 100;" data-toggle="modal" data-target="#Modal_{{forloop.counter}}">
                     <svg class="bi bi-plus-circle-fill" width="1.2em" height="1.2em" viewBox="0 0 16 16" fill="purple" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" d="M16 8A8 8 0 110 8a8 8 0 0116 0zM8.5 4a.5.5 0 00-1 0v3.5H4a.5.5 0 000 1h3.5V12a.5.5 0 001 0V8.5H12a.5.5 0 000-1H8.5V4z" clip-rule="evenodd"/>
                     </svg>
@@ -22,7 +22,7 @@
             <form method="POST" action="{% url 'getList' l.id %}">
                 <input type='hidden' name='workspaceId' value={{workspaceId}}>
                 {% csrf_token %}
-                <button type="submit" class="btn btn-link">Open</button>
+                <button type="submit" class="btn btn-link stretched-link"></button>
             </form>
             
         </div>
