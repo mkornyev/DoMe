@@ -31,7 +31,7 @@
             {% for user in workspace.members.all %}
                 <a href="{% url 'Home' %}">
                     <div style="background-color: blue; border-radius: 50%; width: 25px; height: 25px; display: inline-block">.</div>&nbsp;{{ user.first_name|add:' '|add:user.last_name }} | {{ user.username }} 
-                </a>
+                </a><br><br>
             {% endfor %}
         </div>
 
@@ -45,7 +45,7 @@
             {% for user in users %}
                 <a href="{% url 'Home' %}">
                     <div style="background-color: blue; border-radius: 50%; width: 25px; height: 25px; display: inline-block">.</div>&nbsp;{{ user.first_name|add:' '|add:user.last_name }} | {{ user.username }} 
-                </a>
+                </a><br><br>
             {% endfor %}
         </div>
     </div>

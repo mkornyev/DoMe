@@ -103,24 +103,3 @@ class WorkspaceItemForm(forms.Form):
 		dueDate = self.cleaned_data['dueDate']
 		dateObj = datetime.strptime(dueDate, '%d/%m/%Y %H:%M')
 		return dateObj
-	
-	# def clean_dueDate(self):
-	# 	dueDate = self.cleaned_data.get('dueDate')
-	# 	if dueDate < datetime.now():
-	# 		raise forms.ValidationError("Due Date must be in the future.")
-	# 	return dueDate
-
-	# dueDate = forms.DateTimeField(label='Due Date ',
-	#     input_formats=['%d/%m/%Y %H:%M'],
-	#     widget=forms.DateTimeInput(attrs={
-	#         'class': 'form-control datetimepicker-input',
-	#         'data-target': '#datetimepicker'
-	#     })
-	# 
-	
-	# def clean_priority(self):
-	# 	priority = self.cleaned_data.get('priority')
-	# 	if priority not in [1, 2, 3]:
-	# 		raise forms.ValidationError("Must have a valid priority")
-
-	# 	return priority

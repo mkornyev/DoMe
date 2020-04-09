@@ -40,6 +40,8 @@ urlpatterns = [
     path('addItem/', views.addItem, name='addItem'),
     path('createDoMeItem', views.createDoMeItem, name='createDoMeItem'),    
 
+    path('requestJoin', views.requestJoin, name='requestJoin'),
     path('searchMembers/', views.searchMembers, name='searchMembers'),    
+    path('searchWorkspace/', views.searchWorkspace, name='searchWorkspace'),    
 
 ]
