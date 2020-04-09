@@ -36,8 +36,10 @@ urlpatterns = [
     path('createWorkspace', views.createWorkspace, name='createWorkspace'),
     path('createDoMeList', views.createDoMeList, name='createDoMeList'),
     path('addItem/', views.addItem, name='addItem'),
+    path('searchWorkspace', views.searchWorkspace, name='searchWorkspace'),
     # path('createDoMeItem', views.createDoMeItem, name='createDoMeItem'),    
 
+    path('requestJoin', views.requestJoin, name='requestJoin'),
     path('list/<int:id>', views.viewList, name='getList'),
 
 ]

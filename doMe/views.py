@@ -12,7 +12,6 @@ from django.contrib.auth import logout as auth_logout
 from doMe.forms import *
 from doMe.models import *
 
-
 # BASIC VIEWS
 
 def landingPage(request):
@@ -98,6 +97,10 @@ def about(request):
 	context = {}
 	return render(request, 'doMe/about.html', context)
 
+# ************************************************************
+# 							HOME VIEW 		 				#
+# ************************************************************
+
 @login_required
 def home(request): 
 	context = createHomeContext(request)
@@ -107,32 +110,38 @@ def createHomeContext(request):
 	context = {}
 	context['passedInForm'] = WorkspaceForm()
 	context['title'] = 'My workspaces'
-	context['pageType'] = 'workspace'
+	context['pageType'] = 'Workspace'
 	context['createFunction'] = 'createWorkspace'
 	context['workspaces'] = Workspace.objects.filter(members=request.user)
 
 	return context
 
-
-# WORKSPACES
-
 @login_required
-def viewWorkspace(request, id):
-	context = createViewWorkspaceContext(request, id)
+def searchWorkspace(request):
+	context = createHomeContext(request)
+	context['clickJoin'] = "defaultOpen"
+	if request.method != 'POST' or 'search' not in request.POST or not request.POST['search'].isdigit():
+		context['modalError'] = 'invalid search query'
+	else:
+		context['search'] = request.POST['search']
+		try: 
+			workspace = Workspace.objects.get(id=int(request.POST['search']))
+			context['workspaceQuery'] = workspace
+		except: 
+			context['modalError'] = 'invalid search query: workspace id doesn\'t exist'
 	return render(request, 'doMe/home.html', context)
 
-def createViewWorkspaceContext(request, id): 
-	workspace = get_object_or_404(Workspace, id=id)
-
-	context = {}
-	context['passedInForm'] = ListForm()
-	context['workspaceId'] = workspace.id
-	context['lists'] = workspace.lists.all()
-	context['title'] = workspace.organization
-	context['createFunction'] = 'createDoMeList'
-	context['pageType'] = 'doMe List'
-	context['itemForm'] = ItemForm()
-	return context
+@login_required
+def requestJoin(request):
+	context = createHomeContext(request)
+	if request.method != 'POST' or 'workspaceId' not in request.POST or not request.POST['workspaceId'].isdigit():
+		context['error'] = 'invalid join request'
+	else:
+		context['joinMessage'] = "Request Sent!"
+		workspace = Workspace.objects.get(id=int(request.POST['workspaceId']))
+		workspace.requests.add(request.user)
+	return render(request, 'doMe/home.html', context)
+	
 
 @login_required
 def createWorkspace(request):
@@ -153,8 +162,27 @@ def createWorkspace(request):
 
 	return redirect(reverse('Home'))
 
+# ************************************************************
+# 							WORKSPACE View 		 				#
+# ************************************************************
 
-# LISTS
+@login_required
+def viewWorkspace(request, id):
+	context = createViewWorkspaceContext(request, id)
+	return render(request, 'doMe/home.html', context)
+
+def createViewWorkspaceContext(request, id): 
+	workspace = get_object_or_404(Workspace, id=id)
+
+	context = {}
+	context['passedInForm'] = ListForm()
+	context['workspaceId'] = workspace.id
+	context['lists'] = workspace.lists.all()
+	context['title'] = workspace.organization
+	context['createFunction'] = 'createDoMeList'
+	context['pageType'] = 'doMe List'
+	context['itemForm'] = ItemForm()
+	return context
 
 @login_required
 def createDoMeList(request):
@@ -175,30 +203,10 @@ def createDoMeList(request):
 		workspace.lists.add(newList)
 	return redirect(reverse('getWorkspace', args = (workspace.id,)))
 
-@login_required
-def createDoMeItem(request):
-	if request.method != 'POST':
-		return 
 
-	form = ItemForm(request.POST)
-
-	if not form.is_valid():
-		context = createViewWorkspaceContext(request, request.POST['workspaceId'])
-		context['error']= 'Invalid Date'
-		return render(request, 'doMe/home.html', context)
-	else:
-		newItem = Item(title=form.cleaned_data['title'], 
-						description=form.cleaned_data['description'],
-						user = request.user,
-						priority = form.cleaned_data['priority'],
-						dueDate = form.cleaned_data['dueDate'])
-		newItem.save()
-
-		current = get_object_or_404(List, id=request.POST['doMeListId'])
-		current.items.add(newItem)
-	print('***', request.POST)
-	print('**', request.POST['workspaceId'])
-	return redirect(reverse('getWorkspace', args = (request.POST['workspaceId'],)))
+# ************************************************************
+# 							List  		 				#
+# ************************************************************
 
 @login_required
 def viewList(request, id):
@@ -216,7 +224,9 @@ def viewList(request, id):
 
 @login_required
 def addItem(request):
-	if request.method != 'POST' or 'description' not in request.POST or 'dueDate' not in request.POST or 'listId' not in request.POST:
+	# 'description' not in request.POST or 'dueDate' not in request.POST or 
+	if request.method != 'POST' or \
+	'listId' not in request.POST:
 		return redirect(reverse('Landing Page'))
 	
 	currList = get_object_or_404(List, id=request.POST['listId'])	
@@ -233,6 +243,7 @@ def addItem(request):
 				# dueDate=request.POST['dueDate'], 
 				dueDate=datetime.now(), # BUG need to convert dueDate to datetime object
 				description=request.POST['description'])
+
 	item.save() 
 	currList.items.add(item)
 
@@ -242,4 +253,25 @@ def addItem(request):
 	# return redirect(reverse('getList', args = (request.POST['listId'],)))
 	
 
-	
+# @login_required
+# def createDoMeItem(request):
+# 	if request.method != 'POST':
+# 		return 
+
+# 	form = ItemForm(request.POST)
+
+# 	if not form.is_valid():
+# 		context = createViewWorkspaceContext(request, request.POST['workspaceId'])
+# 		context['error']= 'Invalid Date'
+# 		return render(request, 'doMe/home.html', context)
+# 	else:
+# 		newItem = Item(title=form.cleaned_data['title'], 
+# 						description=form.cleaned_data['description'],
+# 						user = request.user,
+# 						priority = form.cleaned_data['priority'],
+# 						dueDate = form.cleaned_data['dueDate'])
+# 		newItem.save()
+
+# 		current = get_object_or_404(List, id=request.POST['doMeListId'])
+# 		current.items.add(newItem)
+# 	return redirect(reverse('getWorkspace', args = (request.POST['workspaceId'],)))

@@ -11,20 +11,18 @@
                     </svg>
                 </button>
                 
-                <ul class='priority-list'>
                 {% for item in l.items.all %}
-                    <li class="card-text mb-2 text-muted">{{ item.title }}</li>
+                    <p class="card-text mb-2 text-muted"> <span id="priority-{{item.priority}}" class="dot"></span>  {{ item.title }}</p>
                 {% endfor %}
-                </ul>
             </div>
 
             <!-- View List Link -->
-            <form method="POST" action="{% url 'getList' l.id %}">
+<!--             <form method="POST" action="{% url 'getList' l.id %}">
                 <input type='hidden' name='workspaceId' value={{workspaceId}}>
                 {% csrf_token %}
                 <button type="submit" class="btn btn-link stretched-link"></button>
             </form>
-            
+             -->
         </div>
         {% if forloop.counter|divisibleby:3 %}</div><div class="row"> {% endif %}
         {% if forloop.last %} </div> {% endif %}
@@ -44,10 +42,11 @@
         <div class="modal-body">
             <form method="POST" action="{% url 'addItem' %}">
                 <table>{{ itemForm }}</table>
+
                 {% csrf_token %}
                 <button type="submit" class="btn btn-primary">Add Item</button>
                 <input type='hidden' name='workspaceId' value={{workspaceId}}>
-                <input type='hidden' name='doMeListId' value={{l.id}}>
+                <input type='hidden' name='listId' value={{l.id}}>
             </form>
         </div>
 

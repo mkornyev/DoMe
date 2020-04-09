@@ -47,10 +47,10 @@ class List(models.Model):
 
 class Workspace(models.Model):
 	admin = models.ForeignKey(User, on_delete=models.PROTECT)
-	members = models.ManyToManyField(User, related_name='workspaces')
+	members = models.ManyToManyField(User, related_name='members')
 	lists = models.ManyToManyField(List, related_name='workspace')
-
 	organization = models.CharField(max_length=30, default='New Workspace')
 	description = models.CharField(max_length=200)
+	requests = models.ManyToManyField(User, related_name='requests')
 	
 

@@ -4,9 +4,26 @@
     /* background-color: #EE9480; */
 }
 
-ul
-{
+ul {
     list-style-type: none;
+}
+.dot {
+  height:7px;
+  width: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+#priority-0 {
+  color: none;
+}
+#priority-1 {
+  background-color: red;
+}
+#priority-2 {
+  background-color: yellow;
+}
+#priority-3 {
+  background-color: chartreuse;
 }
 
 .priority-list {
