@@ -40,4 +40,6 @@ urlpatterns = [
     path('addItem/', views.addItem, name='addItem'),
     path('createDoMeItem', views.createDoMeItem, name='createDoMeItem'),    
 
+    path('searchMembers/', views.searchMembers, name='searchMembers'),    
+
 ]

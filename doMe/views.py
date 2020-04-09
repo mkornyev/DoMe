@@ -154,6 +154,10 @@ def createWorkspace(request):
 
 	return redirect(reverse('Home'))
 
+@login_required
+def searchMembers(request):
+	for item in request.POST:
+		print(item)
 
 # LISTS
 

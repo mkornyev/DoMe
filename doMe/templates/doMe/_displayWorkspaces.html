@@ -39,7 +39,7 @@
 
         <div>Add Members:</div>
         <input id="searchBar-{{ workspace.id }}" class="form-control mr-sm-2" type="search" placeholder="Add a user" aria-label="Search" style="display: inline-block; width: 70%;">
-        <button class="btn btn-primary my-2 my-sm-0" type="submit" onclick="searchMembers();">Search</button><br><br>
+        <button class="btn btn-primary my-2 my-sm-0" type="submit"  value="{{ workspace.id }}" onclick="searchMembers(self.value);">Search</button><br><br>
 
         <div style="max-height: 15vh; overflow-y: scroll;">
             {% for user in users %}

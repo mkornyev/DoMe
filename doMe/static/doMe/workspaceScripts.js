@@ -10,10 +10,11 @@ function getCSRFToken() {
     return "unknown";
 }
 
-function searchMembers() {
-    return;
+function searchMembers(val) {
+    console.log('Searching')
+    console.log(val)
 
-    var bar = $('#searchBar')
+    var bar = $('#searchBar')[0]
 
     if(bar.html() === "") { return }
 
@@ -29,7 +30,7 @@ function searchMembers() {
             alert("Error")
         }
     }
-    req.open("POST", "/search-members", true);
+    req.open("POST", "/searchMembers", true);
     req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     req.send("query=" + content + "&csrfmiddlewaretoken="+getCSRFToken());
 }
