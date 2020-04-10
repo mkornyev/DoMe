@@ -90,7 +90,7 @@ class ItemForm(forms.Form):
 	priority = forms.CharField(widget=forms.Select(choices=Priority.choices, attrs={'class':'form-input form-select'}))
 	title = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'class': 'form-input form-control', 'placeholder': 'Add a title...'}))
 	dueDate = forms.DateTimeField(input_formats=['%d/%m/%Y %H:%M'], 
-		widget=forms.DateTimeInput(attrs={'class': 'form-control datetimepicker-input', 'data-target': '#datetimepicker', 'style':'border-radius: .25rem; display: inline-block;'}))
+		widget=forms.DateTimeInput(attrs={'class': 'form-control datetimepicker-input', 'data-target': '#datetimepicker', 'style':'border-radius: .25rem; display: inline-block;', 'placeholder':'--/--/--'}))
 
 class WorkspaceItemForm(forms.Form):
 	priority = forms.CharField(widget=forms.Select(choices=Priority.choices, attrs={'class':'form-input form-select'}))

@@ -131,19 +131,6 @@ def searchWorkspace(request):
 		except: 
 			context['modalError'] = 'invalid search query: workspace id doesn\'t exist'
 	return render(request, 'doMe/home.html', context)
-
-def createViewWorkspaceContext(request, id): 
-	workspace = get_object_or_404(Workspace, id=id)
-
-	context = {}
-	context['passedInForm'] = ListForm()
-	context['workspaceId'] = workspace.id
-	context['lists'] = workspace.lists.all()
-	context['title'] = workspace.organization
-	context['createFunction'] = 'createDoMeList'
-	context['pageType'] = 'doMe List'
-	context['itemForm'] = WorkspaceItemForm()
-	return context
 	
 @login_required
 def requestJoin(request):
@@ -200,7 +187,7 @@ def createViewWorkspaceContext(request, id):
 	context['title'] = workspace.organization
 	context['createFunction'] = 'createDoMeList'
 	context['pageType'] = 'doMe List'
-	context['itemForm'] = ItemForm()
+	context['itemForm'] = WorkspaceItemForm()
 	return context
 
 @login_required
