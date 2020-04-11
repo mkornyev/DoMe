@@ -258,8 +258,7 @@ def viewList(request, id):
 @login_required
 def addItem(request):
 	# 'description' not in request.POST or 'dueDate' not in request.POST or 
-	if request.method != 'POST' or \
-	'listId' not in request.POST:
+	if request.method != 'POST' or 'listId' not in request.POST:
 		return redirect(reverse('Landing Page'))
 	
 	currList = get_object_or_404(List, id=request.POST['listId'])	
