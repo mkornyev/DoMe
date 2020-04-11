@@ -246,11 +246,8 @@ def createDoMeItem(request):
 
 @login_required
 def viewList(request, id):
-	if request.method != 'POST' or not 'workspaceId' in request.POST:
-		return redirect(reverse('Landing Page'))
-
-	workspace = get_object_or_404(Workspace, id=request.POST['workspaceId'])
 	currList = get_object_or_404(List, id=id)
+	workspace = currList.workspace.first()
 
 	if request.user not in workspace.members.all():
 		raise Http404
