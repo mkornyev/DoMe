@@ -185,6 +185,7 @@ def createViewWorkspaceContext(request, id):
 	context['workspaceId'] = workspace.id
 	context['lists'] = workspace.lists.all()
 	context['title'] = workspace.organization
+	context['requests'] = workspace.requests.all()
 	context['createFunction'] = 'createDoMeList'
 	context['pageType'] = 'doMe List'
 	context['itemForm'] = WorkspaceItemForm()
@@ -239,6 +240,18 @@ def createDoMeItem(request):
 
 		current.items.add(newItem)
 	return redirect(reverse('getWorkspace', args = (request.POST['workspaceId'],)))
+
+@login_required
+def acceptJoin(request):
+	print('hi')
+	if request.method!='POST' or 'decision' not in request.POST:
+		redirect(reverse('Landing Page'))
+	workspace = get_object_or_404(Workspace, id=request.POST['workspaceId'])
+	newMember = get_object_or_404(User, username = request.POST['username'])
+	workspace.members.add(newMember)
+	workspace.requests.remove(newMember)
+	return redirect(reverse('getWorkspace', args = (request.POST['workspaceId'],)))
+
 
 # ************************************************************
 # 							List  		 				#

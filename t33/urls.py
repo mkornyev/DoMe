@@ -41,6 +41,7 @@ urlpatterns = [
     path('createDoMeItem', views.createDoMeItem, name='createDoMeItem'),    
 
     path('requestJoin', views.requestJoin, name='requestJoin'),
+    path('acceptJoin', views.acceptJoin, name='acceptJoin'),
     path('searchMembers/', views.searchMembers, name='searchMembers'),    
     path('searchWorkspace/', views.searchWorkspace, name='searchWorkspace'),    
 
