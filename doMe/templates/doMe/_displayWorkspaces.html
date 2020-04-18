@@ -4,8 +4,11 @@
         <h5 class="card-title">{{ workspace.organization }}</h5>
 
         <div style="position: absolute; top: 15px; right: 10px; z-index: 10;">
-            <button class="btn btn-link" type='button' data-toggle="modal" data-target="#exampleModal{{ workspace.organization }}" >
-                {{ workspace.members.count }} Members | <span style="width: 50px; height: 50px; border-radius: 50%;">+</span>
+            <button {% if openedModal == workspace.id|stringformat:'i' %}id="defaultOpen"{% endif%} class="btn btn-link" type='button' data-toggle="modal" data-target="#membersModal-{{ workspace.id }}" >
+                {{ workspace.members.count }} Members 
+                {% if user == workspace.admin %}
+                    <span style="width: 50px; height: 50px; border-radius: 50%;">| Add Members</span>
+                {% endif %}
             </button>
         </div>
 
@@ -14,8 +17,8 @@
     <a href="{% url 'getWorkspace' workspace.id %}" class="stretched-link"></a>
 </div>
   
-<!-- Modal -->
-<div class="modal fade" id="exampleModal{{ workspace.organization }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<!-- Add Members Modal -->
+<div class="modal fade" id="membersModal-{{ workspace.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
     <div class="modal-header">
@@ -28,26 +31,56 @@
 
         <p>Shared With:</p>
         <div style="max-height: 15vh; overflow-y: scroll;">
-            {% for user in workspace.members.all %}
-                <a href="{% url 'Home' %}">
-                    <div style="background-color: blue; border-radius: 50%; width: 25px; height: 25px; display: inline-block">.</div>&nbsp;{{ user.first_name|add:' '|add:user.last_name }} | {{ user.username }} 
-                </a><br><br>
+            {% for member in workspace.members.all %}
+                <a class="wkspace-member-link" href="{% url 'Home' %}" style="text-decoration: none;">
+                    {% load static %}
+                    <img src="{% static 'doMe/clarke.jpg' %}">
+                    <span style="display: inline-block;">&nbsp;{{ member.first_name|add:' '|add:member.last_name }} | {{ member.username }}</span>
+                </a>
+
+                {% if user.id == member.id %}
+                    <form  method="POST" action="{% url 'leaveWorkspace' %}" style="float: right;">                            
+                        <input type='hidden' name='workspace' value="{{workspace.id}}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link wkspace-aside-link">Leave Workspace</button>
+                    </form>
+                {% endif %}
+                <br>
             {% endfor %}
         </div>
 
+        {% if user == workspace.admin %}
         <hr>
 
         <div>Add Members:</div>
-        <input id="searchBar-{{ workspace.id }}" class="form-control mr-sm-2" type="search" placeholder="Add a user" aria-label="Search" style="display: inline-block; width: 70%;">
-        <button class="btn btn-primary my-2 my-sm-0" type="submit"  value="{{ workspace.id }}" onclick="searchMembers(self.value);">Search</button><br><br>
+        <form  method="GET" action="" style="">
+            <input name="query" value="{{ request.GET.query }}" id="searchBar-{{ workspace.id }}" class="form-control mr-sm-2" type="search" placeholder="Add a user" aria-label="Search" style="display: inline-block; width: 70%;">
+            <input type='hidden' name='workspace' value="{{workspace.id}}">
+            <button class="btn btn-primary my-2 my-sm-0" type="submit">Search</button><br><br>
+        </form>
 
         <div style="max-height: 15vh; overflow-y: scroll;">
+            {% if users %}
             {% for user in users %}
-                <a href="{% url 'Home' %}">
-                    <div style="background-color: blue; border-radius: 50%; width: 25px; height: 25px; display: inline-block">.</div>&nbsp;{{ user.first_name|add:' '|add:user.last_name }} | {{ user.username }} 
-                </a><br><br>
+
+                <a class="wkspace-member-link" href="{% url 'Home' %}" style="text-decoration: none;">
+                    <img src="{% static 'doMe/clarke.jpg' %}">
+                    <span style="display: inline-block;">&nbsp;{{ user.first_name|add:' '|add:user.last_name }} | {{ user.username }}</span>
+                </a>
+                
+                <form  method="POST" action="{% url 'addToWorkspace' %}" style="float: right;">                            
+                    <input type='hidden' name='workspace' value="{{workspace.id}}">
+                    <input type='hidden' name='member' value="{{user.id}}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link wkspace-aside-link">Add as Member</button>
+                </form>
+                <br>
             {% endfor %}
+            {% else %}
+            <p>No matching users or usernames found</p>
+            {% endif %}
         </div>
+        {% endif %}
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

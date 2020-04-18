@@ -19,21 +19,19 @@
             <p style='color: green; '>{{ joinMessage }}</p>
             <h1 style="display: inline;">{{title}}    </h1>&nbsp;
 
-            <button id='add-workspace' class="btn btn-outline-success" style="margin-bottom: 20px; margin-right:10px" data-toggle="modal" data-target="#Modal1"> New {{pageType}}
-            </button>
+            <button id='add-workspace' class="btn btn-outline-success" style="margin-bottom: 20px; margin-right:10px" data-toggle="modal" data-target="#Modal1">Create {{pageType}}</button>
+            
             {% if pageType == 'Workspace' %}
-                <button id='{{clickJoin}}' class="btn btn-outline-info" style="margin-bottom: 20px;" data-toggle="modal" data-target="#Modal2"> Join {{pageType}}
-            </button>
+                <button id='{{clickJoin}}' class="btn btn-outline-info" style="margin-bottom: 20px;" data-toggle="modal" data-target="#Modal2"> Join {{pageType}}</button>
             {% endif %}
 
             {% if pageType == 'doMe List' %}
-                <button id='{{clickJoin}}' class="btn btn-outline-info" style="margin-bottom: 20px;" data-toggle="modal" data-target="#Modal3"> Inbox
-            </button>
+                <button id='{{clickJoin}}' class="btn btn-outline-info" style="margin-bottom: 20px;" data-toggle="modal" data-target="#Modal3">Member Requests</button>
             {% endif %}
 
             <br></br>
                 
-            <!-- Modal 1 -->
+            <!-- Create List / Workspace Modal -->
             <div class="modal fade" id="Modal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -57,7 +55,7 @@
                 </div>
             </div>
 
-            <!-- Modal 2 -->
+            <!-- SEND Join Request Modal -->
             <div class="modal fade" id="Modal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -81,7 +79,7 @@
                             <p>
                                 {{ workspaceQuery.id }} - {{workspaceQuery.organization}}
                                 <form method="POST" action= "{% url 'requestJoin' %}">
-                                    <button class="btn btn-outline-info" style="margin-bottom: 10px; margin-left: 20px;"> request to join
+                                    <button class="btn btn-outline-info" style="margin-bottom: 10px; margin-left: 20px;">Send a Join Request
                                     </button>
                                     {% csrf_token %}
                                     <input type='hidden' name='workspaceId' value='{{ workspaceQuery.id }}'>
@@ -94,7 +92,7 @@
                 </div>
             </div>
 
-            <!-- Modal 3 -->
+            <!-- APPROVE Join Request Modal  -->
             <div class="modal fade" id="Modal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -106,6 +104,7 @@
                     </div>
 
                     <div class="modal-body">
+                        {% if requests %}
                         {% for request in requests%}
                             <p>{{request.username}} ({{request.first_name}} {{request.last_name}})
                             <form method="POST" action= "{% url 'acceptJoin' %}">
@@ -118,6 +117,9 @@
                         </p>
                             <br>
                         {% endfor %}
+                        {% else %}
+                        <p>There are no pending requests for the workspace</p>
+                        {% endif %}
                     </div>
 
                 </div>

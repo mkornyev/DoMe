@@ -9,6 +9,9 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
 	profilePicture = models.FileField(blank=True)
 	# workspaces / workspaces_set
+
+	class Meta:
+		ordering = ['first_name', 'last_name']
 	
 	def __str__(self):
 		return self.get_username() + " (" + self.get_full_name() + ")"

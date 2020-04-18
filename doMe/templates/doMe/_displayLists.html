@@ -1,4 +1,8 @@
 <div class='container'>
+    {% if pageType == 'doMe List' and not lists %}
+    <p>There are no lists in this workspace. What are you waiting for? Create one now!</p>
+    {% endif %}
+
     {% for l in lists %}    
         {% if forloop.first %} <div class="row"> {% endif %}
         <div class="card list">

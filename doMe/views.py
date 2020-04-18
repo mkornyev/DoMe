@@ -3,6 +3,7 @@
 from django.http import HttpResponse, Http404, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.db.models import Q
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
@@ -113,7 +114,14 @@ def createHomeContext(request):
 	context['pageType'] = 'Workspace'
 	context['createFunction'] = 'createWorkspace'
 	context['workspaces'] = Workspace.objects.filter(members=request.user)
-	context['users'] = User.objects.exclude(id=request.user.id)
+
+	query = request.GET.get('query')
+	workspace = request.GET.get('workspace')
+	if query and workspace:
+		users = User.objects.exclude(id=request.user.id).filter( Q(first_name__icontains=query) | Q(last_name__icontains=query) | Q(username__icontains=query))
+		workspaceObject = get_object_or_404(Workspace, id=workspace)
+		context['users'] = [ u for u in users if u not in workspaceObject.members.all() ]
+		context['openedModal'] = workspace
 
 	return context
 
@@ -192,6 +200,47 @@ def createViewWorkspaceContext(request, id):
 	return context
 
 @login_required
+def acceptJoin(request):
+	if request.method!='POST' or 'decision' not in request.POST:
+		redirect(reverse('Landing Page'))
+	workspace = get_object_or_404(Workspace, id=request.POST['workspaceId'])
+	newMember = get_object_or_404(User, username = request.POST['username'])
+	workspace.members.add(newMember)
+	workspace.requests.remove(newMember)
+	return redirect(reverse('getWorkspace', args = (request.POST['workspaceId'],)))
+
+@login_required
+def leaveWorkspace(request):
+	if request.method == "POST" and 'workspace' in request.POST: 
+		workspace = get_object_or_404(Workspace, id=request.POST['workspace'])
+		workspace.members.remove(request.user)
+	return redirect(reverse('Home'))
+
+@login_required
+def addToWorkspace(request):
+	if request.method == 'POST' and 'workspace' in request.POST and 'member' in request.POST: 
+		workspace = get_object_or_404(Workspace, id=request.POST['workspace'])
+		member = get_object_or_404(User, id=request.POST['member'])
+		workspace.members.add(member)
+	return redirect(reverse('Home'))
+
+
+# ************************************************************
+# 							Lists & Items  		 			 #
+# ************************************************************
+
+@login_required
+def viewList(request, id):
+	currList = get_object_or_404(List, id=id)
+	workspace = currList.workspace.first()
+
+	if request.user not in workspace.members.all():
+		raise Http404
+
+	context = { 'list': currList, 'items': currList.items.all(), 'itemForm': ItemForm() } 
+	return render(request, 'doMe/viewList.html', context)
+
+@login_required
 def createDoMeList(request):
 	if request.method != 'POST':
 		redirect(reverse('Landing Page'))
@@ -242,33 +291,6 @@ def createDoMeItem(request):
 	return redirect(reverse('getWorkspace', args = (request.POST['workspaceId'],)))
 
 @login_required
-def acceptJoin(request):
-	print('hi')
-	if request.method!='POST' or 'decision' not in request.POST:
-		redirect(reverse('Landing Page'))
-	workspace = get_object_or_404(Workspace, id=request.POST['workspaceId'])
-	newMember = get_object_or_404(User, username = request.POST['username'])
-	workspace.members.add(newMember)
-	workspace.requests.remove(newMember)
-	return redirect(reverse('getWorkspace', args = (request.POST['workspaceId'],)))
-
-
-# ************************************************************
-# 							List  		 				#
-# ************************************************************
-
-@login_required
-def viewList(request, id):
-	currList = get_object_or_404(List, id=id)
-	workspace = currList.workspace.first()
-
-	if request.user not in workspace.members.all():
-		raise Http404
-
-	context = { 'list': currList, 'items': currList.items.all(), 'itemForm': ItemForm() } 
-	return render(request, 'doMe/viewList.html', context)
-
-@login_required
 def addItem(request):
 	# 'description' not in request.POST or 'dueDate' not in request.POST or 
 	if request.method != 'POST' or 'listId' not in request.POST:
@@ -300,6 +322,7 @@ def addItem(request):
 
 	context = { 'list': currList, 'items': currList.items.all(), 'itemForm': ItemForm() } 
 	return render(request, 'doMe/viewList.html', context)
+	
 	
 
 # @login_required
