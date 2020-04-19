@@ -26,6 +26,32 @@ ul {
   background-color: chartreuse;
 }
 
+#l-0 {
+  border-right: none; 
+  border-bottom: none; 
+  border-top: none; 
+  border-left: none;
+}
+
+#l-1 {
+  border-right: none; 
+  border-bottom: none; 
+  border-top: none; 
+  border-left: solid red;
+}
+#l-2 {
+  border-right: none; 
+  border-bottom: none; 
+  border-top: none; 
+  border-left: solid yellow;
+}
+#l-3 {
+  border-right: none; 
+  border-bottom: none; 
+  border-top: none; 
+  border-left: solid chartreuse;
+}
+
 .priority-list {
     list-style-type: circle;
 }

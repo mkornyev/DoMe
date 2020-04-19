@@ -37,6 +37,9 @@ urlpatterns = [
     path('createDoMeList', views.createDoMeList, name='createDoMeList'),
 
     path('list/<int:id>', views.viewList, name='getList'),
+    path('list/priority/<int:id>', views.viewListByPriority, name='getListPriority'),
+    path('list/date/<int:id>', views.viewListByDate, name='getListDate'),
+    
     path('addItem/', views.addItem, name='addItem'),
     path('createDoMeItem', views.createDoMeItem, name='createDoMeItem'),    
 

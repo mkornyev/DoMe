@@ -17,10 +17,24 @@
             <br>
             <p style='color: red; '>{{ error }}</p>
             <h1 style="display: inline;">{{list.title}}</h1>
+
+            <!-- Sort dropdown -->
+            <div class="dropdown">
+              <button class="btn btn-outline-info dropdown-toggle float-right" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Sort by
+              </button>
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item {{default}}" href="{% url 'getList' id %}">default</a>
+                <a class="dropdown-item {{priority}}" href="{% url 'getListPriority' id %}">Priority</a>
+                <a class="dropdown-item {{date}}" href="{% url 'getListDate' id %}">Due Date</a>
+              </div>
+            </div>
             <p>{{ list.description }}</p><br>
 
+
+
             {% for item in items %}
-                <div class="card item">
+                <div class="card item" id="l-{{item.priority}}">
                     <div class="card-body">
                         <h2 class="item-title">{{ item.title }} &nbsp;&nbsp;&nbsp;</h2>
                         <p class="item-description">{{ item.description }} &nbsp;&nbsp;&nbsp;</p>

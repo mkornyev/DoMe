@@ -186,6 +186,7 @@ def createViewWorkspaceContext(request, id):
 	context['lists'] = workspace.lists.all()
 	context['title'] = workspace.organization
 	context['requests'] = workspace.requests.all()
+	context['count'] = workspace.members.count
 	context['createFunction'] = 'createDoMeList'
 	context['pageType'] = 'doMe List'
 	context['itemForm'] = WorkspaceItemForm()
@@ -243,12 +244,12 @@ def createDoMeItem(request):
 
 @login_required
 def acceptJoin(request):
-	print('hi')
 	if request.method!='POST' or 'decision' not in request.POST:
 		redirect(reverse('Landing Page'))
 	workspace = get_object_or_404(Workspace, id=request.POST['workspaceId'])
 	newMember = get_object_or_404(User, username = request.POST['username'])
-	workspace.members.add(newMember)
+	if request.POST['decision'] == 'accept':		
+		workspace.members.add(newMember)
 	workspace.requests.remove(newMember)
 	return redirect(reverse('getWorkspace', args = (request.POST['workspaceId'],)))
 
@@ -259,14 +260,36 @@ def acceptJoin(request):
 
 @login_required
 def viewList(request, id):
+	return getList(request,id)
+
+@login_required
+def viewListByPriority(request, id):
+	print('a')
+	return getList(request,id, 'priority')
+
+@login_required
+def viewListByDate(request, id):
+	return getList(request,id,'date')
+
+
+def getList(request, id, sortOrder='default'):
 	currList = get_object_or_404(List, id=id)
 	workspace = currList.workspace.first()
 
 	if request.user not in workspace.members.all():
 		raise Http404
 
-	context = { 'list': currList, 'items': currList.items.all(), 'itemForm': ItemForm() } 
+	context = { 'list': currList, 'itemForm': ItemForm(), 'id':id} 
+	if sortOrder == 'default':
+		context['items'] = currList.items.all()
+	elif sortOrder == 'priority':
+		context['items'] = currList.items.order_by('priority')
+	elif sortOrder == 'date':
+		context['items'] = currList.items.order_by('dueDate')
+	# context[sortOrder] == 'active'
 	return render(request, 'doMe/viewList.html', context)
+
+
 
 @login_required
 def addItem(request):
@@ -285,8 +308,7 @@ def addItem(request):
 		return render(request, 'doMe/home.html', context)
 
 	if not form.is_valid() or date == None:
-		context = { 'list': currList, 'items': currList.items.all(), 'itemForm': form } 
-		return render(request, 'doMe/viewList.html', context)
+		redirect(reverse('getList', args=(request.POST['listId'],)))
 
 	item = Item(user=request.user, 
 				order=currList.items.count(), 				
@@ -298,8 +320,7 @@ def addItem(request):
 	item.save() 
 	currList.items.add(item)
 
-	context = { 'list': currList, 'items': currList.items.all(), 'itemForm': ItemForm() } 
-	return render(request, 'doMe/viewList.html', context)
+	return redirect(reverse('getList', args=(request.POST['listId'],)))
 	
 
 # @login_required
