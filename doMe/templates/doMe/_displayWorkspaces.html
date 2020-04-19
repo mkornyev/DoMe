@@ -4,7 +4,7 @@
         <h5 class="card-title">{{ workspace.organization }}</h5>
 
         <div style="position: absolute; top: 15px; right: 10px; z-index: 10;">
-            <button {% if openedModal == workspace.id|stringformat:'i' %}id="defaultOpen"{% endif%} class="btn btn-link" type='button' data-toggle="modal" data-target="#membersModal-{{ workspace.id }}" >
+            <button {% if openedModal == workspace.id|stringformat:'i' %}id="defaultOpen"{% endif%} class="btn btn-link" type='button' data-toggle="modal" data-target="#membersModal-{{ workspace.id }}" style="text-decoration: none;" >
                 {{ workspace.members.count }} Members 
                 {% if user == workspace.admin %}
                     <span style="width: 50px; height: 50px; border-radius: 50%;">| Add Members</span>
@@ -32,17 +32,29 @@
         <p>Shared With:</p>
         <div style="max-height: 15vh; overflow-y: scroll;">
             {% for member in workspace.members.all %}
-                <a class="wkspace-member-link" href="{% url 'Home' %}" style="text-decoration: none;">
+                <a class="wkspace-member-link" href="{% url 'getProfile' member.id %}" style="text-decoration: none;">
                     {% load static %}
-                    <img src="{% static 'doMe/clarke.jpg' %}">
+
+                    {% if not member.profilePicture %}
+                    <img src="{% static 'doMe/stockProfile.jpeg' %}">
+                    {% else %}
+                    <img src="{% url 'getProfilePicture' member.id %}">
+                    {% endif %}
+
                     <span style="display: inline-block;">&nbsp;{{ member.first_name|add:' '|add:member.last_name }} | {{ member.username }}</span>
                 </a>
 
-                {% if user.id == member.id %}
+                {% if user == member or user == workspace.admin %}
                     <form  method="POST" action="{% url 'leaveWorkspace' %}" style="float: right;">                            
                         <input type='hidden' name='workspace' value="{{workspace.id}}">
+                        <input type='hidden' name='member' value="{{member.id}}">
                         {% csrf_token %}
+
+                        {% if user == member %}
                         <button type="submit" class="btn btn-link wkspace-aside-link">Leave Workspace</button>
+                        {% else %}
+                        <button type="submit" class="btn btn-link wkspace-aside-link">Remove</button>
+                        {% endif %}
                     </form>
                 {% endif %}
                 <br>
@@ -63,8 +75,14 @@
             {% if users %}
             {% for user in users %}
 
-                <a class="wkspace-member-link" href="{% url 'Home' %}" style="text-decoration: none;">
-                    <img src="{% static 'doMe/clarke.jpg' %}">
+                <a class="wkspace-member-link" href="{% url 'getProfile' user.id %}" style="text-decoration: none;">
+                    
+                    {% if not user.profilePicture %}
+                    <img src="{% static 'doMe/stockProfile.jpeg' %}">
+                    {% else %}
+                    <img src="{% url 'getProfilePicture' user.id %}">
+                    {% endif %}
+
                     <span style="display: inline-block;">&nbsp;{{ user.first_name|add:' '|add:user.last_name }} | {{ user.username }}</span>
                 </a>
                 
@@ -77,7 +95,7 @@
                 <br>
             {% endfor %}
             {% else %}
-            <p>No matching users or usernames found</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;No matching users or usernames found</p>
             {% endif %}
         </div>
         {% endif %}

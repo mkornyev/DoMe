@@ -4,4 +4,4 @@ db.sqlite3
 migrations
 .DS_Store
 .vscode/
-# doMe/user_uploads/*
+doMe/user_uploads/*

@@ -8,6 +8,8 @@ from django.contrib.auth.models import AbstractUser
  
 class User(AbstractUser):
 	profilePicture = models.FileField(blank=True)
+	content_type = models.CharField(max_length=50, blank=True)
+	created_at = models.DateTimeField(default=datetime.now())
 	# workspaces / workspaces_set
 
 	class Meta:

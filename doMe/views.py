@@ -1,4 +1,5 @@
 # Imports 
+import os 
 
 from django.http import HttpResponse, Http404, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -171,11 +172,6 @@ def createWorkspace(request):
 
 	return redirect(reverse('Home'))
 
-@login_required
-def searchMembers(request):
-	for item in request.POST:
-		print(item)
-
 # ************************************************************
 # 							WORKSPACE View 		 				#
 # ************************************************************
@@ -211,9 +207,19 @@ def acceptJoin(request):
 
 @login_required
 def leaveWorkspace(request):
-	if request.method == "POST" and 'workspace' in request.POST: 
+	if request.method == "POST" and 'workspace' in request.POST and 'member' in request.POST: 
 		workspace = get_object_or_404(Workspace, id=request.POST['workspace'])
-		workspace.members.remove(request.user)
+		member = get_object_or_404(User, id=request.POST['member'])
+
+		if request.user != member and request.user != workspace.admin:
+			raise Http404
+
+		workspace.members.remove(member)
+
+		# Remove the workspace if there are no members left
+		if workspace.members.all().count() == 0: 
+			workspace.delete()
+			
 	return redirect(reverse('Home'))
 
 @login_required
@@ -323,27 +329,53 @@ def addItem(request):
 	context = { 'list': currList, 'items': currList.items.all(), 'itemForm': ItemForm() } 
 	return render(request, 'doMe/viewList.html', context)
 	
+
+# Users
+
+@login_required
+def getProfile(request, id):
+	user = get_object_or_404(User, id=id)
+	itemCount = Item.objects.filter(user=user).count()
+
+	context = { 'user': user, 'itemCount': itemCount }
+	return render(request, 'doMe/profile.html', context)
+
+@login_required
+def getProfilePicture(request, id):
+	user = get_object_or_404(User, id=id)
+
+	if not user.profilePicture:
+		raise Http404
+
+	return HttpResponse(user.profilePicture, content_type=user.content_type)
+
+@login_required
+def editUser(request):
+	context = {}
+	user = get_object_or_404(User, id=request.user.id)
+	oldImage = user.profilePicture
+	form = UserForm(request.POST, request.FILES, instance=user)
 	
+	if not form.is_valid():
+		context['form'] = form
+		itemCount = Item.objects.filter(user=user).count()
+		context = { 'user': user, 'itemCount': itemCount, 'form': form }
+		return render(request, 'doMe/profile.html', context)
+	else: 
+		pic = form.cleaned_data['profilePicture']
+		if pic and pic != '':
 
-# @login_required
-# def createDoMeItem(request):
-# 	if request.method != 'POST':
-# 		return 
+			# Update content type, remove old image
+			try: 
+				# Edge case where revalidated file is a FieldFile type (and not an Image)
+				user.content_type = form.cleaned_data['profilePicture'].content_type
 
-# 	form = ItemForm(request.POST)
+				if oldImage: 
+					BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+					IMAGE_ROOT = os.path.join(BASE_DIR, 'doMe/user_uploads/' + oldImage.name)
+					os.remove(IMAGE_ROOT)
+			except: 
+				pass
+		form.save()
 
-# 	if not form.is_valid():
-# 		context = createViewWorkspaceContext(request, request.POST['workspaceId'])
-# 		context['error']= 'Invalid Date'
-# 		return render(request, 'doMe/home.html', context)
-# 	else:
-# 		newItem = Item(title=form.cleaned_data['title'], 
-# 						description=form.cleaned_data['description'],
-# 						user = request.user,
-# 						priority = form.cleaned_data['priority'],
-# 						dueDate = form.cleaned_data['dueDate'])
-# 		newItem.save()
-
-# 		current = get_object_or_404(List, id=request.POST['doMeListId'])
-# 		current.items.add(newItem)
-# 	return redirect(reverse('getWorkspace', args = (request.POST['workspaceId'],)))
+	return redirect(reverse('getProfile', args=(user.id,)))
