@@ -1,8 +1,10 @@
 # Imports 
+import os 
 
 from django.http import HttpResponse, Http404, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.db.models import Q
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
@@ -113,7 +115,14 @@ def createHomeContext(request):
 	context['pageType'] = 'Workspace'
 	context['createFunction'] = 'createWorkspace'
 	context['workspaces'] = Workspace.objects.filter(members=request.user)
-	context['users'] = User.objects.exclude(id=request.user.id)
+
+	query = request.GET.get('query')
+	workspace = request.GET.get('workspace')
+	if query and workspace:
+		users = User.objects.exclude(id=request.user.id).filter( Q(first_name__icontains=query) | Q(last_name__icontains=query) | Q(username__icontains=query))
+		workspaceObject = get_object_or_404(Workspace, id=workspace)
+		context['users'] = [ u for u in users if u not in workspaceObject.members.all() ]
+		context['openedModal'] = workspace
 
 	return context
 
@@ -163,11 +172,6 @@ def createWorkspace(request):
 
 	return redirect(reverse('Home'))
 
-@login_required
-def searchMembers(request):
-	for item in request.POST:
-		print(item)
-
 # ************************************************************
 # 							WORKSPACE View 		 				#
 # ************************************************************
@@ -191,6 +195,57 @@ def createViewWorkspaceContext(request, id):
 	context['pageType'] = 'doMe List'
 	context['itemForm'] = WorkspaceItemForm()
 	return context
+
+@login_required
+def acceptJoin(request):
+	if request.method!='POST' or 'decision' not in request.POST:
+		redirect(reverse('Landing Page'))
+	workspace = get_object_or_404(Workspace, id=request.POST['workspaceId'])
+	newMember = get_object_or_404(User, username = request.POST['username'])
+	workspace.members.add(newMember)
+	workspace.requests.remove(newMember)
+	return redirect(reverse('getWorkspace', args = (request.POST['workspaceId'],)))
+
+@login_required
+def leaveWorkspace(request):
+	if request.method == "POST" and 'workspace' in request.POST and 'member' in request.POST: 
+		workspace = get_object_or_404(Workspace, id=request.POST['workspace'])
+		member = get_object_or_404(User, id=request.POST['member'])
+
+		if request.user != member and request.user != workspace.admin:
+			raise Http404
+
+		workspace.members.remove(member)
+
+		# Remove the workspace if there are no members left
+		if workspace.members.all().count() == 0: 
+			workspace.delete()
+			
+	return redirect(reverse('Home'))
+
+@login_required
+def addToWorkspace(request):
+	if request.method == 'POST' and 'workspace' in request.POST and 'member' in request.POST: 
+		workspace = get_object_or_404(Workspace, id=request.POST['workspace'])
+		member = get_object_or_404(User, id=request.POST['member'])
+		workspace.members.add(member)
+	return redirect(reverse('Home'))
+
+
+# ************************************************************
+# 							Lists & Items  		 			 #
+# ************************************************************
+
+@login_required
+def viewList(request, id):
+	currList = get_object_or_404(List, id=id)
+	workspace = currList.workspace.first()
+
+	if request.user not in workspace.members.all():
+		raise Http404
+
+	context = { 'list': currList, 'items': currList.items.all(), 'itemForm': ItemForm() } 
+	return render(request, 'doMe/viewList.html', context)
 
 @login_required
 def createDoMeList(request):
@@ -289,8 +344,6 @@ def getList(request, id, sortOrder='default'):
 	# context[sortOrder] == 'active'
 	return render(request, 'doMe/viewList.html', context)
 
-
-
 @login_required
 def addItem(request):
 	# 'description' not in request.POST or 'dueDate' not in request.POST or 
@@ -323,25 +376,52 @@ def addItem(request):
 	return redirect(reverse('getList', args=(request.POST['listId'],)))
 	
 
-# @login_required
-# def createDoMeItem(request):
-# 	if request.method != 'POST':
-# 		return 
+# Users
 
-# 	form = ItemForm(request.POST)
+@login_required
+def getProfile(request, id):
+	user = get_object_or_404(User, id=id)
+	itemCount = Item.objects.filter(user=user).count()
 
-# 	if not form.is_valid():
-# 		context = createViewWorkspaceContext(request, request.POST['workspaceId'])
-# 		context['error']= 'Invalid Date'
-# 		return render(request, 'doMe/home.html', context)
-# 	else:
-# 		newItem = Item(title=form.cleaned_data['title'], 
-# 						description=form.cleaned_data['description'],
-# 						user = request.user,
-# 						priority = form.cleaned_data['priority'],
-# 						dueDate = form.cleaned_data['dueDate'])
-# 		newItem.save()
+	context = { 'user': user, 'itemCount': itemCount }
+	return render(request, 'doMe/profile.html', context)
 
-# 		current = get_object_or_404(List, id=request.POST['doMeListId'])
-# 		current.items.add(newItem)
-# 	return redirect(reverse('getWorkspace', args = (request.POST['workspaceId'],)))
+@login_required
+def getProfilePicture(request, id):
+	user = get_object_or_404(User, id=id)
+
+	if not user.profilePicture:
+		raise Http404
+
+	return HttpResponse(user.profilePicture, content_type=user.content_type)
+
+@login_required
+def editUser(request):
+	context = {}
+	user = get_object_or_404(User, id=request.user.id)
+	oldImage = user.profilePicture
+	form = UserForm(request.POST, request.FILES, instance=user)
+	
+	if not form.is_valid():
+		context['form'] = form
+		itemCount = Item.objects.filter(user=user).count()
+		context = { 'user': user, 'itemCount': itemCount, 'form': form }
+		return render(request, 'doMe/profile.html', context)
+	else: 
+		pic = form.cleaned_data['profilePicture']
+		if pic and pic != '':
+
+			# Update content type, remove old image
+			try: 
+				# Edge case where revalidated file is a FieldFile type (and not an Image)
+				user.content_type = form.cleaned_data['profilePicture'].content_type
+
+				if oldImage: 
+					BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+					IMAGE_ROOT = os.path.join(BASE_DIR, 'doMe/user_uploads/' + oldImage.name)
+					os.remove(IMAGE_ROOT)
+			except: 
+				pass
+		form.save()
+
+	return redirect(reverse('getProfile', args=(user.id,)))

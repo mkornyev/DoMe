@@ -1,0 +1,101 @@
+{% extends "doMe/base.html" %}
+
+{% block page_specific_styles %}{% endblock %}
+
+{% block title %}{% block navtitle %}
+	{{ user.first_name|add:' '|add:user.last_name }}
+{% endblock %}{% endblock %}
+
+{% block content %}
+	<div class="row">
+        <div class="col-md-auto">
+            <!-- Profile Header -->
+            <br>
+
+            <p style='color: red; '>{{ error }}</p>
+            <p style='color: green; '>{{ joinMessage }}</p>
+            <h1>{{ user.first_name|add:' '|add:user.last_name }}</h1>
+
+            <br>
+
+            {% if user.profilePicture %}
+	    	    <img id="profilePic" src="{% url 'getProfilePicture' user.id %}" style="height: 300px; width: 300px; border-radius: 20px;">
+            {% else %}{% load static %}
+                <img id="profilePic" src="{% static 'doMe/stockProfile.jpeg' %}" style="height: 300px; width: 300px; border-radius: 20px;">
+            {% endif %}
+
+            <br><br>
+
+            <p>
+                Confirmed User since <b>{{ user.created_at }}</b><br>
+                Member of <b>{{ user.workspace_set.count }} workspaces</b><br>
+                Creator of <b>{{ itemCount }} toDo items</b>
+            </p>
+        </div>
+
+        <div id="profileEdit" class="col-md-auto">
+            
+            <hr><br>
+            
+            {% if request.user.id == user.id %}
+            <form enctype="multipart/form-data" action="{% url 'editUser' %}" method="POST">
+                <label>Profile Picture:</label><br>
+                <div class="custom-file" style="width: 371px;">
+                    <input type="file" name="profilePicture" class="custom-file-input form-control-sm">
+                    <label class="custom-file-label col-form-label-sm">Upload Photo...</label>
+                </div><br>
+
+                <label>
+                    First Name:
+                    <input type="text" name="first_name" class="form-control" placeholder="Your First Name" value="{{ user.first_name }}">
+                </label><br>
+                
+                <label>
+                    Last Name:
+                    <input type="text" name="last_name" class="form-control" placeholder="Your Last Name" value="{{ user.last_name }}">
+                </label><br>
+
+                <label>
+                    Username:
+                    <input type="text" name="username" class="form-control" placeholder="Username" value="{{ user.username }}">
+                </label><br>
+
+                <label>
+                    Email:
+                    <input type="text" name="email" class="form-control" placeholder="email@example.com" value="{{ user.email }}">
+                </label><br>
+
+                {% if form.errors %}
+                    <div>{{ form.errors }}</div>
+                {% endif %}
+
+                {% csrf_token %}
+                <button class="btn btn-primary" type="submit">Update</button>
+            </form>
+
+            {% else %}
+
+            <p>
+                <span><b>First Name: </b>{{ user.first_name }}<br></span>
+                <span><b>Last Name: </b>{{ user.last_name }}<br></span>
+                <span><b>Username: </b>{{ user.username }}<br></span>
+                <span><b>Email: </b>{{ user.email }}<br></span>
+            </p>
+
+            {% endif %}
+
+            <br><br>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_specific_scripts %}
+<script>
+    // Add fileName to file label
+    $('.custom-file-input').on('change', function(){
+        var fileDir = $(this).val().split("\\");
+        var fileName = fileDir[fileDir.length-1]; 
+        $(this).next('.custom-file-label').html(fileName);
+    }); 
+</script>
+{% endblock %}

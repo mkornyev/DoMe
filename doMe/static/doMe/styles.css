@@ -132,6 +132,25 @@ html {
   transition: box-shadow 0.3s ease-in-out 0s; 
 }
 
+.wkspace-member-link {
+  text-decoration: none;
+}
+
+.wkspace-member-link img {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+}
+.wkspace-aside-link {
+  text-emphasis: none;
+  float: right;
+  
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-right: 5px;
+  padding-left: 20px;
+}
+
 /* Lists */
 
 .list {
@@ -189,4 +208,31 @@ html {
 .item-date {
   font-size: .8em;
   color: grey;
+}
+
+/* Profile Page */
+
+#profileEdit {
+  margin-top: 13vh;
+  padding-left: 5vw;
+}
+
+#profileEdit hr  {
+  display: none;
+}
+
+#profileEdit input,
+#profileEdit .custom-file {
+  margin-bottom: 5px;
+}
+
+@media (max-width: 768px) { 
+  #profileEdit {
+      margin-top: 0vh;
+      padding-left: 3vw;
+  }
+
+  #profileEdit hr {
+      display: block;
+  }
 }

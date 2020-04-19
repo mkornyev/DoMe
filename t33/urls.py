@@ -28,11 +28,9 @@ urlpatterns = [
     path('logout/', views.logout, name='Logout'),
     path('about/', views.about, name='About'),
 
-    # Page Views
+    # Lists/Workspaces
     path('workspace/<int:id>', views.viewWorkspace, name='getWorkspace'),
     path('list/<int:id>', views.viewList, name='getList'),
-
-    # Create
     path('createWorkspace', views.createWorkspace, name='createWorkspace'),
     path('createDoMeList', views.createDoMeList, name='createDoMeList'),
 
@@ -43,9 +41,14 @@ urlpatterns = [
     path('addItem/', views.addItem, name='addItem'),
     path('createDoMeItem', views.createDoMeItem, name='createDoMeItem'),    
 
+    # Membership
     path('requestJoin', views.requestJoin, name='requestJoin'),
     path('acceptJoin', views.acceptJoin, name='acceptJoin'),
-    path('searchMembers/', views.searchMembers, name='searchMembers'),    
+    path('leaveWorkspace/', views.leaveWorkspace, name='leaveWorkspace'),    
+    path('addToWorkspace/', views.addToWorkspace, name='addToWorkspace'),    
     path('searchWorkspace/', views.searchWorkspace, name='searchWorkspace'),    
 
+    path('editUser/', views.editUser, name='editUser'),
+    path('profile/<int:id>', views.getProfile, name='getProfile'),
+    path('profilePicture/<int:id>', views.getProfilePicture, name = 'getProfilePicture'), 
 ]

@@ -34,7 +34,7 @@ class RegistrationForm(forms.Form):
 	email      = forms.CharField(max_length=50, widget = forms.EmailInput(attrs=INPUT_ATTRIBUTES))
 	first_name = forms.CharField(max_length=50, widget=forms.TextInput(attrs=INPUT_ATTRIBUTES))
 	last_name  = forms.CharField(max_length=50, widget=forms.TextInput(attrs=INPUT_ATTRIBUTES))
-	phone = forms.CharField(max_length=10, widget=forms.TextInput(attrs=INPUT_ATTRIBUTES))
+	# phone = forms.CharField(max_length=10, widget=forms.TextInput(attrs=INPUT_ATTRIBUTES)) # Not used 
 
 	def clean(self):
 		cleaned_data = super().clean()
@@ -53,16 +53,40 @@ class RegistrationForm(forms.Form):
 
 		return username
 		
-	def clean_phone(self):
-		phone = self.cleaned_data['phone']
-		cleaned_phone = ''.join(digit for digit in phone if digit.isdigit())
+	# def clean_phone(self):
+	# 	phone = self.cleaned_data['phone']
+	# 	cleaned_phone = ''.join(digit for digit in phone if digit.isdigit())
 
-		if len(cleaned_phone) != 10:
-			raise forms.ValidationError('You must enter a valid phone number')
+	# 	if len(cleaned_phone) != 10:
+	# 		raise forms.ValidationError('You must enter a valid phone number')
 
-		return cleaned_phone
+	# 	return cleaned_phone
 
 # MODEL FORMS
+
+class UserForm(forms.ModelForm): 
+	class Meta: 
+		model = User
+		fields = ['username', 'first_name', 'last_name', 'email', 'profilePicture', 'content_type', 'created_at']
+		exclude = (
+			'content_type', 'created_at'
+		)
+
+	def clean_profilePicture(self):
+		profilePicture = self.cleaned_data['profilePicture']
+
+		if profilePicture:
+			if not profilePicture.name.lower().endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif')):
+				raise forms.ValidationError('File type is not image')
+
+			try:
+				if (not profilePicture.content_type) or (not profilePicture.content_type.startswith('image')):
+					raise forms.ValidationError('File type is not image')
+				if profilePicture.size > MAX_UPLOAD_SIZE:
+					raise forms.ValidationError('File too big (max: {0} mb)'.format(MAX_UPLOAD_SIZE/1000000))
+			except:
+				pass 
+		return profilePicture
 
 class WorkspaceForm(forms.Form):
 	organization = forms.CharField(max_length = 50, widget=forms.TextInput(attrs=INPUT_ATTRIBUTES))
