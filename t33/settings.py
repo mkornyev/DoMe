@@ -25,7 +25,7 @@ SECRET_KEY = '0!3@rgn-@ir-6y&fwdnp+u$n@uezo@ourb^5%76tzelm#kmj70'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['dome-app.herokuapp.com']
 
 
 # Application definition
@@ -118,8 +118,28 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = '/static/'
+#####################################################
+
+# AUTH / MISC
+LOGIN_URL = '/login'
+LOGIN_REDIRECT_URL = '/'
 
 AUTH_USER_MODEL = 'doMe.User'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'doMe/user_uploads/')
+
+# DEPLOYMENT VARS 
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+STATIC_URL = '/static/'
+
+# DB Configuration 
+
+import dj_database_url 
+prod_db  =  dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(prod_db)
