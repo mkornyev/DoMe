@@ -319,13 +319,11 @@ def viewList(request, id):
 
 @login_required
 def viewListByPriority(request, id):
-	print('a')
 	return getList(request,id, 'priority')
 
 @login_required
 def viewListByDate(request, id):
 	return getList(request,id,'date')
-
 
 def getList(request, id, sortOrder='default'):
 	currList = get_object_or_404(List, id=id)
@@ -334,14 +332,15 @@ def getList(request, id, sortOrder='default'):
 	if request.user not in workspace.members.all():
 		raise Http404
 
-	context = { 'list': currList, 'itemForm': ItemForm(), 'id':id} 
+	context = { 'list': currList, 'itemForm': ItemForm(), 'id':id, 'workspaceId': workspace.id}
 	if sortOrder == 'default':
 		context['items'] = currList.items.all()
 	elif sortOrder == 'priority':
 		context['items'] = currList.items.order_by('priority')
 	elif sortOrder == 'date':
 		context['items'] = currList.items.order_by('dueDate')
-	# context[sortOrder] == 'active'
+	context[sortOrder] = 'active'
+	# context['active'] = sortOrder
 	return render(request, 'doMe/viewList.html', context)
 
 @login_required
@@ -374,9 +373,26 @@ def addItem(request):
 	currList.items.add(item)
 
 	return redirect(reverse('getList', args=(request.POST['listId'],)))
-	
 
-# Users
+@login_required
+def deleteComplete(request):
+	if request.method != 'POST':
+		return redirect(reverse('Landing Page'))
+	item = get_object_or_404(Item, id=request.POST['item'])
+	l = get_object_or_404(List, id=request.POST['list'])
+	if request.POST['action'] == 'delete':
+		l.items.remove(item)
+	elif request.POST['action'] =='complete':
+		print(item.done)
+		item.done = not item.done
+		item.save()
+		
+	return redirect(reverse('getList', args=(l.id,)))	
+
+# ************************************************************
+# 							Users  		 				#
+# ************************************************************
+
 
 @login_required
 def getProfile(request, id):
