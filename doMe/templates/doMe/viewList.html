@@ -12,11 +12,22 @@
 {% block content %}
     <div class="row">
         <div class="col">
-            
+
             <!-- Workspaces Header -->
             <br>
             <p style='color: red; '>{{ error }}</p>
+            
+            <a  id="backListButton" href = "{% url 'getWorkspace' workspaceId %}" style="position: absolute; left: -3%;">
+              <svg class="bi bi-arrow-left-short" width="3em" height="3em" viewBox="0 0 16 16" fill="red" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M7.854 4.646a.5.5 0 010 .708L5.207 8l2.647 2.646a.5.5 0 01-.708.708l-3-3a.5.5 0 010-.708l3-3a.5.5 0 01.708 0z" clip-rule="evenodd"/>
+                <path fill-rule="evenodd" d="M4.5 8a.5.5 0 01.5-.5h6.5a.5.5 0 010 1H5a.5.5 0 01-.5-.5z" clip-rule="evenodd"/>
+              </svg>
+          </a>
+
             <h1 style="display: inline;">{{list.title}}</h1>
+
+            <p>{{ list.description }} </p>
+            {% include 'doMe/_addListItem.html' %}
 
             <!-- Sort dropdown -->
             <div class="dropdown">
@@ -29,23 +40,42 @@
                 <a class="dropdown-item {{date}}" href="{% url 'getListDate' id %}">Due Date</a>
               </div>
             </div>
-            <p>{{ list.description }}</p><br>
-
+            <br><br>
 
             <div id="sortablelist" class="list-group">
               {% for item in items %}
                   <div class="list-group-item d-flex card item" data-id="{{ item.id }}" data-order="{{ item.order }}" id="l-{{item.priority}}">
                       <div class="card-body">
-                          <h2 class="item-title">{{ item.title }} &nbsp;&nbsp;&nbsp;</h2>
-                          <p class="item-description">{{ item.description }} &nbsp;&nbsp;&nbsp;</p>
+                          <h2 class="item-title">
+                              {% if item.done %} <del>
+                              {% endif %}
+                          {{ item.title }} &nbsp;&nbsp;&nbsp;</del></h2>      
+                              <form method="POST" action = "{% url 'deleteComplete' %}">          
+                                  <button class="btn btn-outline-danger float-right" style='margin-left:10px; font-size: 25px; padding: 0px 5px 0px 5px;' name='action' value='delete'>&times;</button>
+                                  <button class="btn btn-outline-primary float-right" name='action' value='complete'>
+                                    {% if item.done %}
+                                      Undo
+                                    {% else %}
+                                      Complete 
+                                    {% endif %}
+                                  </button>
+
+                                  <input type='hidden' name='item' value={{item.id}}>
+                                  <input type='hidden' name='list' value={{list.id}}>
+                                  {% csrf_token %}
+                              </form>
+
+                          <p class="item-description">                            {% if item.done %} <del>
+                              {% endif %}{{ item.description }} &nbsp;&nbsp;&nbsp;</del></p>
                           <p class="item-author">{{ user.first_name|add:' '|add:user.last_name }}</p>
                           <p class="item-date">on {{ item.created_at }} | due on {{ item.dueDate }}</p>
                       </div>
+
                   </div>
               {% endfor %}
             </div>
 
-            {% include 'doMe/_addListItem.html' %}
+            <br><br>
 
         </div>
 	</div>

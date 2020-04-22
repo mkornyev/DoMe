@@ -41,6 +41,7 @@ urlpatterns = [
     path('addItem/', views.addItem, name='addItem'),
     path('createDoMeItem', views.createDoMeItem, name='createDoMeItem'),    
     path('updateItem', views.updateItem, name = 'updateItem'), 
+    path('check', views.deleteComplete, name='deleteComplete'),    
 
     # Membership
     path('requestJoin', views.requestJoin, name='requestJoin'),

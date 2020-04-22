@@ -245,4 +245,8 @@ html {
   .landing-row {
     padding-top: 10vh;
   }
+
+  #backListButton {
+    position: block;
+  }
 }
