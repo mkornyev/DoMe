@@ -28,7 +28,7 @@ urlpatterns = [
     path('logout/', views.logout, name='Logout'),
     path('about/', views.about, name='About'),
 
-    # Lists/Workspaces
+    # Lists/Workspaces/Items
     path('workspace/<int:id>', views.viewWorkspace, name='getWorkspace'),
     path('list/<int:id>', views.viewList, name='getList'),
     path('createWorkspace', views.createWorkspace, name='createWorkspace'),
@@ -40,6 +40,7 @@ urlpatterns = [
     
     path('addItem/', views.addItem, name='addItem'),
     path('createDoMeItem', views.createDoMeItem, name='createDoMeItem'),    
+    path('updateItem', views.updateItem, name = 'updateItem'), 
 
     # Membership
     path('requestJoin', views.requestJoin, name='requestJoin'),

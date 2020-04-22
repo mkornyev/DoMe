@@ -1,5 +1,5 @@
 # Imports 
-import os 
+import os, json
 
 from django.http import HttpResponse, Http404, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -52,7 +52,7 @@ def register(request):
 	homeList = List(isGlobal=True, title='Global List', description='See all your toDos here')
 	homeList.save()
 
-	item = Item(user=user, title='Add a new goal!', description='And a goal description...')
+	item = Item(user=user, title='Add a new goal!', description='And a goal description...', order=0)
 	item.save()
 	homeList.items.add(item)
 
@@ -293,8 +293,8 @@ def createDoMeItem(request):
 						priority = form.cleaned_data['priority'],
 						dueDate = date)
 		newItem.save()
-
 		current.items.add(newItem)
+		
 	return redirect(reverse('getWorkspace', args = (request.POST['workspaceId'],)))
 
 @login_required
@@ -375,6 +375,16 @@ def addItem(request):
 
 	return redirect(reverse('getList', args=(request.POST['listId'],)))
 	
+@login_required
+def updateItem(request):
+	if request.method != "POST" or "id" not in request.POST or "to" not in request.POST: 
+		return HttpResponse(json.dumps({ 'error': 'Missing field' }), content_type='application/json')
+
+	item = get_object_or_404(Item, id=request.POST['id'])
+	item.order = request.POST['to']
+	item.save()
+
+	return HttpResponse(json.dumps({ 'success': 'true' }), content_type='application/json')
 
 # Users
 
