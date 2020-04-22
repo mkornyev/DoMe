@@ -44,6 +44,7 @@ function findMovedItems() {
       if(order != index) {
           console.log("Item with id #" + id + "moved from " + order + " to " + index)
           updateBackend(id, index)
+          $(this).attr('data-order', index)
       }
       
       index = index + 1
