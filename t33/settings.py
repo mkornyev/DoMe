@@ -121,13 +121,21 @@ USE_TZ = True
 
 #####################################################
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'doMe/user_uploads/')
+
 # AUTH / MISC
 LOGIN_URL = '/login'
 LOGIN_REDIRECT_URL = '/'
-
 AUTH_USER_MODEL = 'doMe.User'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'doMe/user_uploads/')
+# EMAIL NOTIFICATIONS
+
+EMAIL_HOST = 'smtp.gmail.com'   
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'realistic.reentry.412@gmail.com'
+EMAIL_HOST_PASSWORD = 'reentry412'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
 
 # DEPLOYMENT VARS 
 
