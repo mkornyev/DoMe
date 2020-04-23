@@ -17,61 +17,71 @@
 
 {% block content %}
     <div class="row">
-        <a href = "{% url 'getWorkspace' workspaceId %}">
-                    <svg class="bi bi-arrow-left-short" width="3em" height="3em" viewBox="0 0 16 16" fill="red" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" d="M7.854 4.646a.5.5 0 010 .708L5.207 8l2.647 2.646a.5.5 0 01-.708.708l-3-3a.5.5 0 010-.708l3-3a.5.5 0 01.708 0z" clip-rule="evenodd"/>
-              <path fill-rule="evenodd" d="M4.5 8a.5.5 0 01.5-.5h6.5a.5.5 0 010 1H5a.5.5 0 01-.5-.5z" clip-rule="evenodd"/>
-            </svg>
-        </a>
         <div class="col">
 
-<!-- Workspaces Header -->
+            <!-- Workspaces Header -->
             <br>
             <p style='color: red; '>{{ error }}</p>
+            
+            <a  id="backListButton" href = "{% url 'getWorkspace' workspaceId %}" style="position: absolute; left: -3%;">
+              <svg class="bi bi-arrow-left-short" width="3em" height="3em" viewBox="0 0 16 16" fill="red" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M7.854 4.646a.5.5 0 010 .708L5.207 8l2.647 2.646a.5.5 0 01-.708.708l-3-3a.5.5 0 010-.708l3-3a.5.5 0 01.708 0z" clip-rule="evenodd"/>
+                <path fill-rule="evenodd" d="M4.5 8a.5.5 0 01.5-.5h6.5a.5.5 0 010 1H5a.5.5 0 01-.5-.5z" clip-rule="evenodd"/>
+              </svg>
+          </a>
 
             <h1 style="display: inline;">{{list.title}}</h1>
-                        <p>{{ list.description }} </p>
-                        {% include 'doMe/_addListItem.html' %}
+
+            <p>{{ list.description }} </p>
+            {% include 'doMe/_addListItem.html' %}
 
             <!-- Sort dropdown -->
             <div class="dropdown">
               <button class="btn btn-outline-info dropdown-toggle float-right" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Sort by
+                Sort By
               </button>
               <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item {{default}}" href="{% url 'getList' id %}">default</a>
+                <a class="dropdown-item {{default}}" href="{% url 'getList' id %}">List Order</a>
                 <a class="dropdown-item {{priority}}" href="{% url 'getListPriority' id %}">Priority</a>
                 <a class="dropdown-item {{date}}" href="{% url 'getListDate' id %}">Due Date</a>
               </div>
             </div>
             <br><br>
 
+            <div id="sortablelist" class="list-group">
+              {% for item in items %}
+                  <div class="list-group-item d-flex card item" data-id="{{ item.id }}" data-order="{{ item.order }}" id="l-{{item.priority}}">
+                      <div class="card-body">
+                          <h2 class="item-title">
+                              {% if item.done %} <del>
+                              {% endif %}
+                          {{ item.title }} &nbsp;&nbsp;&nbsp;</del></h2>      
+                              <form method="POST" action = "{% url 'deleteComplete' %}">          
+                                  <button class="btn btn-outline-danger float-right" style='margin-left:10px; font-size: 25px; padding: 0px 5px 0px 5px;' name='action' value='delete'>&times;</button>
+                                  <button class="btn btn-outline-primary float-right" name='action' value='complete'>
+                                    {% if item.done %}
+                                      Undo
+                                    {% else %}
+                                      Complete 
+                                    {% endif %}
+                                  </button>
 
-            {% for item in items %}
-                <div class="card item" id="l-{{item.priority}}">
-                    <div class="card-body">
-                        <h2 class="item-title">
-                            {% if item.done %} <del>
-                            {% endif %}
-                        {{ item.title }} &nbsp;&nbsp;&nbsp;</del></h2>      
-                            <form method="POST" action = "{% url 'deleteComplete' %}">          
-                                <button class="btn btn-outline-danger float-right" style='margin-left:10px; font-size: 25px; padding: 0px 5px 0px 5px;' name='action' value='delete'>&times;</button>
-                                <button class="btn btn-outline-primary float-right" name='action' value='complete'>{% if item.done %} undo {% else %}
-                                    complete {% endif %}
-                               </button>
-                                <input type='hidden' name='item' value={{item.id}}>
-                                <input type='hidden' name='list' value={{list.id}}>
-                                {% csrf_token %}
-                            </form>
+                                  <input type='hidden' name='item' value={{item.id}}>
+                                  <input type='hidden' name='list' value={{list.id}}>
+                                  {% csrf_token %}
+                              </form>
 
-                        <p class="item-description">                            {% if item.done %} <del>
-                            {% endif %}{{ item.description }} &nbsp;&nbsp;&nbsp;</del></p>
-                        <p class="item-author">{{ user.first_name|add:' '|add:user.last_name }}</p>
-                        <p class="item-date">on {{ item.created_at }} | due on {{ item.dueDate }}</p>
-                    </div>
+                          <p class="item-description">                            {% if item.done %} <del>
+                              {% endif %}{{ item.description }} &nbsp;&nbsp;&nbsp;</del></p>
+                          <p class="item-author">{{ user.first_name|add:' '|add:user.last_name }}</p>
+                          <p class="item-date">on {{ item.created_at }} | due on {{ item.dueDate }}</p>
+                      </div>
 
-                </div>
-            {% endfor %}
+                  </div>
+              {% endfor %}
+            </div>
+
+            <br><br>
 
         </div>
 	</div>
@@ -79,18 +89,13 @@
 {% endblock %}
 
 {% block page_specific_scripts %}
-<script>
-    $(function () {
-      $("#datetimepicker").datetimepicker({
-        format: 'DD/MM/YYYY HH:mm',
-      });
-    });
-</script>
-
 {% load static %}
-<script src="{% static 'doMe/itemScripts.js' %}"></script>
-
 <!-- Calendar widget scripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js" integrity="sha256-VBLiveTKyUZMEzJd6z2mhfxIqz3ZATCuVMawPZGzIfA=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js" integrity="sha256-z0oKYg6xiLq3yJGsp/LsY9XykbweQlHl42jHv2XTBz4=" crossorigin="anonymous"></script>
+
+<!-- SortableJS CDN -->
+<script src="https://raw.githack.com/SortableJS/Sortable/master/Sortable.js"></script>
+
+<script src="{% static 'doMe/itemScripts.js' %}"></script>
 {% endblock %}

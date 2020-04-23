@@ -31,7 +31,7 @@ class Item(models.Model):
 	user = models.ForeignKey(User, on_delete=models.PROTECT)
 	# list / list_set
 
-	priority = models.IntegerField(default=0, choices = Priority.choices)	
+	priority = models.IntegerField(default=3, choices = Priority.choices)	
 	order = models.IntegerField(default=0)	# Order within list
 	done = models.BooleanField(default=False)
 	title = models.CharField(max_length=30)

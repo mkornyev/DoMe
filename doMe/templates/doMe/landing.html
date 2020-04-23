@@ -7,16 +7,17 @@
 {% endblock %}{% endblock %}
 
 {% block content %}
-	<div class="row" style="padding-top: 20vh;">
-        <div class="col">
+	<div class="row landing-row">
+        <div class="col landing-col">
             <h1 style="font-size: 2em; font-weight: 100;"><span style="color: indianred;">Do</span>Me</h1>
             <p>
                 Welcome to DoMe, a collaborative get-things-done app!<br><br>
-                <span>We pride ourselves on collab calendars, todo items, and priorities<br>Made by Andrew Hong and Maksym Kornyev @ Carnegie Mellon University<br>Django 3.0 | Python 3.6</span>
+                <span>We pride ourselves on collab calendars, todo items, and priorities<br>Made by <a href="mailto:andrewh1@andrew.cmu.edu">Andrew Hong</a> and <a href="mailto:mkornyev@andrew.cmu.edu">Maksym Kornyev</a> @ Carnegie Mellon University<br><br>Running on Django 3.0 & Python 3.6</span>
             </p>
+            <br>
         </div>
 
-        <div class="col">
+        <div class="col landing-col">
             <div class="tab">
                 <button class="tablinks" onclick="openTab(event, 'Login')" id='{{loginTab}}'>Login</button>
                 <button class="tablinks" onclick="openTab(event, 'Register')" id='{{registerTab}}'>Register</button>
