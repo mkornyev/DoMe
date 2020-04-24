@@ -140,6 +140,20 @@ def searchWorkspace(request):
 		except: 
 			context['modalError'] = 'invalid search query: workspace id doesn\'t exist'
 	return render(request, 'doMe/home.html', context)
+
+@login_required
+def searchUsers(request):
+	context = createHomeContext(request)
+	context['clickUsers'] = "defaultOpen"
+	if request.method != 'POST' or 'search' not in request.POST:
+		context['modalError'] = 'invalid search query'
+	else:
+			context['search'] = request.POST['search']
+			workspaceObject = get_object_or_404(Workspace, id=request.POST['workspaceId'])
+			users = User.objects.exclude(id=request.user.id).filter( Q(first_name__icontains=context['search']) | Q(last_name__icontains=context['search']) | Q(username__icontains=context['search']))
+			context['users'] = [ u for u in users if u not in workspaceObject.members.all() ]
+			print(context['users'])
+	return render(request, 'doMe/home.html', context)
 	
 @login_required
 def requestJoin(request):

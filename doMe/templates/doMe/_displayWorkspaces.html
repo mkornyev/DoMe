@@ -4,7 +4,7 @@
         <h5 class="card-title">{{ workspace.organization }}</h5>
 
         <div style="position: absolute; top: 15px; right: 10px; z-index: 10;">
-            <button {% if openedModal == workspace.id|stringformat:'i' %}id="defaultOpen"{% endif%} class="btn btn-link" type='button' data-toggle="modal" data-target="#membersModal-{{ workspace.id }}" style="text-decoration: none;" >
+            <button id="{{clickUsers}}" class="btn btn-link" type='button' data-toggle="modal" data-target="#membersModal-{{ workspace.id }}" style="text-decoration: none;" >
                 {{ workspace.members.count }} Members 
                 {% if user == workspace.admin %}
                     <span style="width: 50px; height: 50px; border-radius: 50%;">| Add Members</span>
@@ -65,9 +65,16 @@
         <hr>
 
         <div>Add Members:</div>
-        <form  method="GET" action="" style="">
+<!--         <form  method="GET" action="" style="">
             <input name="query" value="{{ request.GET.query }}" id="searchBar-{{ workspace.id }}" class="form-control mr-sm-2" type="search" placeholder="Add a user" aria-label="Search" style="display: inline-block; width: 70%;">
             <input type='hidden' name='workspace' value="{{workspace.id}}">
+            <button class="btn btn-primary my-2 my-sm-0" type="submit">Search</button><br><br>
+        </form> -->
+
+        <form method="POST" action="{% url 'searchUsers' %}">
+            <input name='search' value="{{search}}">
+            {% csrf_token %}
+            <input type='hidden' name='workspaceId' value="{{workspace.id}}">
             <button class="btn btn-primary my-2 my-sm-0" type="submit">Search</button><br><br>
         </form>
 
