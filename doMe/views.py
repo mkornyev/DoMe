@@ -5,6 +5,10 @@ from django.http import HttpResponse, Http404, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.db.models import Q
+from django.core import mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.conf import settings
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
@@ -243,6 +247,14 @@ def addToWorkspace(request):
 		workspace = get_object_or_404(Workspace, id=request.POST['workspace'])
 		member = get_object_or_404(User, id=request.POST['member'])
 		workspace.members.add(member)
+
+		subject = "DoMe: You've been added to a new workspace."
+		html_message = render_to_string('doMe/mailerNotification.html', {'workspace': workspace, 'member': member, 'admin': request.user })
+		plain_message = strip_tags(html_message)
+		from_email = settings.EMAIL_HOST_USER
+		
+		mail.send_mail(subject, plain_message, from_email, [member.email], html_message=html_message, fail_silently=True)
+		
 	return redirect(reverse('Home'))
 
 

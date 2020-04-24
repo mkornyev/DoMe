@@ -1,0 +1,10 @@
+<div>
+    <h1>DoMe Notification</h1>
+    <p>
+        Hello {{ member.first_name|add:" "|add:member.last_name }},<br><br>
+        You've just been added to the <b>{{ workspace.organization }}</b> workspace by admin {{ admin.username }} ({{ admin.first_name|add:" "|add:admin.last_name }}).<br><br>
+        <a href='https://dome-app.herokuapp.com'>Visit or leave the workspace now!</a>
+    </p>
+    <p>-- The DoMe Team</p>
+    <p style="font-size: 2em; font-weight: 100; margin: 0;"><span style="color: indianred;">Do</span>Me</p>
+</div>
