@@ -43,6 +43,8 @@ urlpatterns = [
     path('updateItem', views.updateItem, name = 'updateItem'), 
     path('check', views.deleteComplete, name='deleteComplete'),    
 
+    path('searchUsers', views.searchUsers, name='searchUsers'),        
+
     # Membership
     path('requestJoin', views.requestJoin, name='requestJoin'),
     path('acceptJoin', views.acceptJoin, name='acceptJoin'),

@@ -19,7 +19,7 @@
             <p style='color: green; '>{{ joinMessage }}</p>
             <h1 style="display: inline;">{{title}}    </h1>&nbsp;
 
-            <button id='add-workspace' class="btn btn-outline-success" style="margin-bottom: 20px; margin-right:10px" data-toggle="modal" data-target="#Modal1">Create {{pageType}}</button>
+            <button id='add-workspace' class="btn btn-outline-primary" style="margin-bottom: 20px; margin-right:10px" data-toggle="modal" data-target="#Modal1">Create {{pageType}}</button>
             
             {% if pageType == 'Workspace' %}
                 <button id='{{clickJoin}}' class="btn btn-outline-info" style="margin-bottom: 20px;" data-toggle="modal" data-target="#Modal2"> Join {{pageType}}</button>
@@ -109,8 +109,8 @@
                         {% for request in requests%}
                             <p>{{request.username}} ({{request.first_name}} {{request.last_name}})
                             <form method="POST" action= "{% url 'acceptJoin' %}">
-                                <button name='decision' value='accept' class="btn btn-outline-danger" style="float: right; margin: 5px">Decline</button>
-                                <button name='decision' value='decline'  class="btn btn-outline-success" style="float: right; margin: 5px;">Accept</button>
+                                <button name='decision' value='decline' class="btn btn-outline-danger" style="float: right; margin: 5px">Decline</button>
+                                <button name='decision' value='accept'  class="btn btn-outline-success" style="float: right; margin: 5px;">Accept</button>
                                 <input type='hidden' name='workspaceId' value={{workspaceId}}>
                                 <input type='hidden' name='username' value={{request.username}}>                                
                                 {% csrf_token %}
