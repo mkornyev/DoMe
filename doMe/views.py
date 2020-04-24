@@ -53,14 +53,14 @@ def register(request):
 	user.save()
 	
 	# Default user workspace setup
-	homeList = List(isGlobal=True, title='Global List', description='See all your toDos here')
+	homeList = List(isGlobal=True, title='New List', description='See all your toDos here')
 	homeList.save()
 
 	item = Item(user=user, title='Add a new goal!', description='And a goal description...', order=0)
 	item.save()
 	homeList.items.add(item)
 
-	workspace = Workspace(organization='Home', description='Your private workspace.', admin=user)
+	workspace = Workspace(organization='Home', description='Your new workspace.', admin=user)
 	workspace.save()
 	workspace.members.add(user) 
 	workspace.lists.add(homeList)

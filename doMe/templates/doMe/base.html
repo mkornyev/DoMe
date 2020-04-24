@@ -7,6 +7,8 @@
 		{% load static %}
 		<link rel="icon" href="{% static 'doMe/appLogo.png' %}">
 		<link href="{% static 'doMe/styles.css' %}" rel="stylesheet" type="text/css">
+		<script src="{% static 'doMe/main.js' %}"></script>
+		
 
 		{% block page_specific_styles %}{% endblock %}
 		<title>DoMe | {% block title %}Home{% endblock %}</title>
@@ -72,6 +74,31 @@
 		<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+		<!-- GSAP -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.3/TimelineMax.min.js" integrity="sha256-fIkQKQryItPqpaWZbtwG25Jp2p5ujqo/NwJrfqAB+Qk=" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.3/TweenMax.min.js" integrity="sha256-lPE3wjN2a7ABWHbGz7+MKBJaykyzqCbU96BJWjio86U=" crossorigin="anonymous"></script>
+		<script src="https://unpkg.com/gsap@latest/dist/gsap.min.js"></script>
+
+		<script>
+
+			const tl = new TimelineMax()
+			var width = window.innerWidth
+			var counter = 0.0
+
+			$('.card').each(function(){
+				$(this).hide(0.0)
+			})
+
+			$('.card').each(function(){
+				tl.fromTo(this,.2,{x: width, display: 'none'},{x:-20, opacity: 1, display: 'block'}, "-=" + counter);
+				tl.fromTo(this,.1,{x: -20},{x:0}, "+=" + counter);
+
+				counter += .05
+			})
+			
+		</script>
+
 		{% block page_specific_scripts %}{% endblock %}
 	</body>
 </html>

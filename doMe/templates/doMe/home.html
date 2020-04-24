@@ -70,8 +70,8 @@
                     <div class="modal-body">
                         <p style='color: red; '>{{ modalError }}</p>
                         <form method="POST" action="{% url 'searchWorkspace' %}">
-                            <label>Enter Workspace Id: </label> 
-                            <input name='search' value="{{search}}">
+                            <label>Enter Workspace Id:</label> 
+                            <input class="" name='search' value="{{search}}">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-primary">Search </button>
                         </form>
